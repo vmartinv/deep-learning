@@ -1,0 +1,4 @@
+#!/bin/bash
+Link='http://www.vision.caltech.edu/Image_Datasets/Caltech101/101_ObjectCategories.tar.gz'
+Folder=Caltech102
+wget -qO- $Link | tar  --transform "s/^101_ObjectCategories/$Folder/" -xvz
