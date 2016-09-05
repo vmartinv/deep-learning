@@ -1,0 +1,25 @@
+Cantidad de oraciones: 3222
+Cantidad de palabras: 101045
+Cantidad de palabras distintas: 9875
+20 palabras mas frecuentes: ['the', 'of', 'and', 'to', 'in', 'is', 'a', 'that', 'it', 'as', 'for', 'which', 'be', 'not', 'with', 'he', 'all', 'one', 'this', 'are']
+[[0 0 0 ..., 0 0 0]
+ [1 0 2 ..., 0 0 0]
+ [0 1 2 ..., 0 0 0]
+ ..., 
+ [7 6 1 ..., 0 0 0]
+ [4 1 2 ..., 0 0 0]
+ [5 3 3 ..., 0 0 0]]
+20 palabras menos frecuentes: ['imprudent', 'theatre', 'administration', 'indirectly', 'analogous', 'incessantly', 'entrails', 'perhapses', 'sugar', 'dealings', 'professes', 'agitator', 'binding', 'ruins', 'workmanlike', 'omit', 'penetrated', 'impaired', 'abridgement', 'admired']
+[[0 0 0 ..., 0 0 0]
+ [0 0 0 ..., 0 0 0]
+ [0 0 0 ..., 0 0 0]
+ ..., 
+ [0 0 0 ..., 0 0 0]
+ [0 0 0 ..., 0 0 0]
+ [0 0 0 ..., 0 0 0]]
+[[ 0.48148148 -0.07407407 -0.40740741]
+ [-0.07407407  0.03703704  0.03703704]
+ [-0.40740741  0.03703704  0.37037037]]
+[[1 0 0]
+ [1 1 1]
+ [1 2 3]]
