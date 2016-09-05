@@ -2,7 +2,7 @@
 
 Things done at Deep Learning course
 
-# Requeriments
+# Requirements
 
 Use
 > pip install -r requirements.txt
