@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 from utils import *
 
 #Leemos el archivo
-sentences = parse_text('caperucita.txt')
+sentences = parse_file('caperucita.txt')
 cantcap = len(sentences)
-sentences += parse_text('machinelearning.txt')
+sentences += parse_file('machinelearning.txt')
 
 #Generamos la lista de palabras
 words = [word.lower() for word in flatten(sentences)]

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from utils import *
 
 #Leemos el archivo
-sentences = parse_text('nietzsche.txt')
+sentences = parse_file('nietzsche.txt')
 
 #Generamos la lista de palabras
 words = [word.lower() for word in flatten(sentences)]

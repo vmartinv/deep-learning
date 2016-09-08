@@ -16,15 +16,18 @@ def flatten(l):
 def sep_words(sentence):
     return list(filter(None, re.findall('[a-zA-Z]+', sentence)))
 
-def parse_text(filename):
-    with open(filename, 'r') as myfile:
-        text = myfile.read()
+def parse_text(text):
     text = text.replace('\n', ' ')
     #Separamos las oraciones
     sentences = text.replace('?', '.').replace('!', '.').split('.')
     #Parseamos cada oracion, una oracion tiene que ser una lista de palabras
     sentences = list(filter(None, map(sep_words, sentences)))
     return sentences
+
+def parse_file(filename):
+    with open(filename, 'r') as myfile:
+        text = myfile.read()
+    return parse_text(text)
 
 def make_interesting_words_dict(words):
     return {word:i for i,word in enumerate(words)}
