@@ -16,6 +16,8 @@ to install needed libraries
 
 # Useful links
 
+* http://colah.github.io/posts/2014-10-Visualizing-MNIST/
 * http://deeplearning.net/software/theano/
 * http://www.scipy-lectures.org/
 * https://github.com/CIFASIS/deep-learning-course/
+
