@@ -118,10 +118,10 @@ def ejercicio4_main():
     for face in get_images_borges():
         face = drop_transparency(face)
         face = normalize(face)
-        face = resize_image(face,28)
+        #face = resize_image(face,28)
         show(face)
 
-
+ejercicio4_main()
 
 
 
