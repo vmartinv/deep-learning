@@ -60,11 +60,21 @@ def show(face):
     M = face.max()
     face = (face-m)/(M-m)
     plt.imshow(face) 
+    plt.axis('off')
     plt.show()
 
 #Ejercicio 1
+def add_depth(face):
+    if len(face.shape) < 3:
+        x, y = face.shape
+        ret = np.empty((x, y, 3), dtype=np.float32)
+        ret[:, :, 2] =  ret[:, :, 1] =  ret[:, :, 0] =  face
+        return ret
+    else:
+        return face
+
 def make_squared(face):
-    lx, ly, col = face.shape
+    lx, ly, _ = face.shape
     tam = max(lx, ly)
     color = mean_by_channel(face)
     if ly<tam:
@@ -86,7 +96,7 @@ def resize_image(face,tam):
 
 
 def normalize(face):
-    face = drop_transparency(face)
+    face = add_depth(face)
     face = make_squared(to_float(face))
     face = zero_mean(face)
     face = one_variance(face)
