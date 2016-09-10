@@ -14,7 +14,7 @@ def get_images_all():
         for fileName in os.listdir(os.path.join(inputdir, clase)):
             if fileName.endswith(extension):
                 r.append(misc.imread(os.path.join(os.path.join(inputdir, clase), fileName)))
-                if len(r)>=10: #FIXME
+                if len(r)>=10: #Para evitar recorrer todo el dataset
                     return r
     return r
 
@@ -25,7 +25,7 @@ def get_images_borges():
     for fileName in os.listdir(inputdir):
         if fileName.endswith(extension):
             r.append(misc.imread(os.path.join(inputdir, fileName)))
-            if len(r)>=10: #FIXME
+            if len(r)>=10: #Para evitar recorrer todo el dataset
                 return r
     return r
 
@@ -60,11 +60,21 @@ def show(face):
     M = face.max()
     face = (face-m)/(M-m)
     plt.imshow(face) 
+    plt.axis('off')
     plt.show()
 
 #Ejercicio 1
+def add_depth(face):
+    if len(face.shape) < 3:
+        x, y = face.shape
+        ret = np.empty((x, y, 3), dtype=np.float32)
+        ret[:, :, 2] =  ret[:, :, 1] =  ret[:, :, 0] =  face
+        return ret
+    else:
+        return face
+
 def make_squared(face):
-    lx, ly, col = face.shape
+    lx, ly, _ = face.shape
     tam = max(lx, ly)
     color = mean_by_channel(face)
     if ly<tam:
@@ -86,7 +96,7 @@ def resize_image(face,tam):
 
 
 def normalize(face):
-    face = drop_transparency(face)
+    face = add_depth(face)
     face = make_squared(to_float(face))
     face = zero_mean(face)
     face = one_variance(face)
@@ -108,7 +118,8 @@ def get_slice(face,dx,dy):
 
 def ejercicio2_main():
     for face in get_images_all():
-        subface = get_slice(face,16,16)
+        subface = add_depth(face)
+        subface = get_slice(subface,16,16)
         subface = normalize(subface)
         show(subface)
 
@@ -118,11 +129,15 @@ def ejercicio4_main():
     for face in get_images_borges():
         face = drop_transparency(face)
         face = normalize(face)
-        #face = resize_image(face,28)
+        face = resize_image(face,28)
         show(face)
 
+print("Ejercicio 1...")
+ejercicio1_main()
+print("Ejercicio 2...")
+ejercicio2_main()
+print("Ejercicio 4...")
 ejercicio4_main()
-
 
 
 
