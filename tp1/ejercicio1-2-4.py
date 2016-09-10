@@ -14,7 +14,7 @@ def get_images_all():
         for fileName in os.listdir(os.path.join(inputdir, clase)):
             if fileName.endswith(extension):
                 r.append(misc.imread(os.path.join(os.path.join(inputdir, clase), fileName)))
-                if len(r)>=10: #FIXME
+                if len(r)>=10: #Para evitar recorrer todo el dataset
                     return r
     return r
 
@@ -25,7 +25,7 @@ def get_images_borges():
     for fileName in os.listdir(inputdir):
         if fileName.endswith(extension):
             r.append(misc.imread(os.path.join(inputdir, fileName)))
-            if len(r)>=10: #FIXME
+            if len(r)>=10: #Para evitar recorrer todo el dataset
                 return r
     return r
 
@@ -118,7 +118,8 @@ def get_slice(face,dx,dy):
 
 def ejercicio2_main():
     for face in get_images_all():
-        subface = get_slice(face,16,16)
+        subface = add_depth(face)
+        subface = get_slice(subface,16,16)
         subface = normalize(subface)
         show(subface)
 
@@ -128,11 +129,15 @@ def ejercicio4_main():
     for face in get_images_borges():
         face = drop_transparency(face)
         face = normalize(face)
-        #face = resize_image(face,28)
+        face = resize_image(face,28)
         show(face)
 
+print("Ejercicio 1...")
+ejercicio1_main()
+print("Ejercicio 2...")
+ejercicio2_main()
+print("Ejercicio 4...")
 ejercicio4_main()
-
 
 
 
