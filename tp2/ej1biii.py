@@ -19,8 +19,8 @@ y = T.dvector("y")
 # this and the following bias variable b
 # are shared so they keep their values
 # between training iterations (updates)
-w = theano.shared(rng.randn(feats, 100), name="w")
-w1 = theano.shared(rng.randn(100), name="w1")
+w = theano.shared(rng.randn(feats, 2), name="w")
+w1 = theano.shared(rng.randn(2), name="w1")
 
 # initialize the bias term
 b = theano.shared(0., name="b")
@@ -30,7 +30,7 @@ print(w.get_value())
 print(b.get_value())
 
 # Construct Theano expression graph
-layer_output = 1 / (1 + T.exp(-T.dot(x, w) - b))   # Probability that target = 1
+layer_output = T.nnet.relu(T.dot(x, w))   
 p_1 = 1 / (1 + T.exp(-T.dot(layer_output, w1) - b))   # Probability that target = 1
 prediction = p_1 > 0.5                    # The prediction thresholded
 xent = -y * T.log(p_1) - (1-y) * T.log(1-p_1) # Cross-entropy loss function
