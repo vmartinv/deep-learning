@@ -8,7 +8,8 @@ feats = 784                               # number of input variables
 
 # generate a dataset: D = (input_values, target_class)
 D = (rng.randn(N, feats), rng.randint(size=N, low=0, high=2))
-training_steps = 10000
+print(len(D))
+training_steps = 100
 
 # Declare Theano symbolic variables
 x = T.dmatrix("x")
@@ -47,10 +48,17 @@ train = theano.function(
 predict = theano.function(inputs=[x], outputs=prediction)
 
 # Train
-batch_size = 50
-B = [D[j*batch_size : min(N, (j+1)*batch_size)] for j in range((batch_size+N-1)/N)]
+batch_size = 20
+validacion = D[:20]
+print(len(D))
+D = D[20:]
+print(len(D))
+B = [D[j*batch_size : min(len(D), (j+1)*batch_size)] for j in range((batch_size+len(D)-1)//len(D))]
 for i in range(training_steps):
-    pred, err = train(B[i%len(B)][0], B[i%len(B)][1])
+    numpy.random.shuffle(B)
+    for batch in B:
+        pred, err = train(batch[0], batch[1])
+
 
 print("Final model:")
 print(w.get_value())
@@ -61,3 +69,5 @@ print("prediction on D:")
 print(predict(D[0]))
 print("error:")
 print(((D[1]-predict(D[0]))**2).sum())
+print("error del batch de validacion:")
+print(((validacion[1]-predict(validacion[0]))**2).sum())
