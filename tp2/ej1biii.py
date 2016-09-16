@@ -1,7 +1,7 @@
-import numpy
+import numpy as np
 import theano
 import theano.tensor as T
-rng = numpy.random
+rng = np.random
 
 N = 400                                   # training sample size
 feats = 784                               # number of input variables
@@ -19,33 +19,37 @@ y = T.dvector("y")
 # this and the following bias variable b
 # are shared so they keep their values
 # between training iterations (updates)
-w = theano.shared(rng.randn(feats, 2), name="w")
-w1 = theano.shared(rng.randn(2), name="w1")
+capa_interna = 10
+w1 = theano.shared(rng.randn(feats, capa_interna), name="w1")
+w = theano.shared(rng.randn(capa_interna), name="w")
 
 # initialize the bias term
+b1 = theano.shared(np.zeros(capa_interna), name="b1")
 b = theano.shared(0., name="b")
 
 print("Initial model:")
 print(w.get_value())
+print(w1.get_value())
 print(b.get_value())
+print(b1.get_value())
 
 # Construct Theano expression graph
-layer_output = T.nnet.relu(T.dot(x, w))   
-p_1 = 1 / (1 + T.exp(-T.dot(layer_output, w1) - b))   # Probability that target = 1
+layer_output = T.nnet.relu(T.dot(x, w1) - b1)   
+p_1 = 1 / (1 + T.exp(-T.dot(layer_output, w) - b))   # Probability that target = 1
 prediction = p_1 > 0.5                    # The prediction thresholded
 xent = -y * T.log(p_1) - (1-y) * T.log(1-p_1) # Cross-entropy loss function
 cost = xent.mean() + 0.01 * (w ** 2).sum() + 0.01 * (w1 ** 2).sum()# The cost to minimize
-gw, gw1, gb = T.grad(cost, [w, w1, b])             # Compute the gradient of the cost
-                                          # w.r.t weight vector w and
-                                          # bias term b
-                                          # (we shall return to this in a
-                                          # following section of this tutorial)
+gw, gw1, gb, gb1 = T.grad(cost, [w, w1, b, b1])        # Compute the gradient of the cost
+                                              # w.r.t weight vector w and
+                                              # bias term b
+                                              # (we shall return to this in a
+                                              # following section of this tutorial)
 
 # Compile
 train = theano.function(
           inputs=[x,y],
           outputs=[prediction, xent],
-          updates=((w, w - 0.1 * gw), (w1, w1 - 0.1 * gw1), (b, b - 0.1 * gb)))
+          updates=((w, w - 0.1 * gw), (w1, w1 - 0.1 * gw1), (b, b - 0.1 * gb), (b1, b1 - 0.1 * gb1)))
 predict = theano.function(inputs=[x], outputs=prediction)
 
 # Train
@@ -59,3 +63,5 @@ print("target values for D:")
 print(D[1])
 print("prediction on D:")
 print(predict(D[0]))
+print("error:")
+print(((D[1]-predict(D[0]))**2).sum())
