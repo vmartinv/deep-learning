@@ -51,7 +51,7 @@ def show(face, title=None):
     face = (face-m)/(M-m)
     plt.imshow(face)
     if title:
-        plt.suptitle(title, fontsize=48, fontweight='bold')
+        plt.suptitle(title, fontsize=24, fontweight='bold')
     plt.axis('off')
     plt.show()
 
@@ -69,10 +69,12 @@ def make_squared(face):
     tam = max(lx, ly)
     color = mean_by_channel(face)
     if ly<tam:
-        face = np.append([[color]*((tam-ly)//2)]*lx, face, axis=1)
+        if tam>1+ly:
+            face = np.append([[color]*((tam-ly)//2)]*lx, face, axis=1)
         face = np.append(face, [[color]*((tam-ly+1)//2)]*lx, axis=1)
     elif lx<tam:
-        face = np.append([[color]*ly]*((tam-lx)//2), face, axis=0)
+        if tam>1+lx:
+            face = np.append([[color]*ly]*((tam-lx)//2), face, axis=0)
         face = np.append(face, [[color]*ly]*((tam-lx+1)//2), axis=0)
     return face
 
@@ -82,8 +84,8 @@ def resize_image(face,tam):
 def normalize(face):
     face = add_depth(face)
     face = make_squared(to_float(face))
-    #~ face = zero_mean(face)
-    #~ face = one_variance(face)
+    face = zero_mean(face)
+    face = one_variance(face)
     return face
 
 

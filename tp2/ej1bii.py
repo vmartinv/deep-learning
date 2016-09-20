@@ -14,9 +14,9 @@ def make_vec(img):
 print("Cargando imagenes...")
 np.random.seed(2342345)
 dataset = []
-for img in funcstp1.get_images("airplanes", 500):
+for img in funcstp1.get_images("airplanes", 60):
     dataset.append((make_vec(img), 0))
-for img in funcstp1.get_images("motorbikes", 500):
+for img in funcstp1.get_images("motorbikes", 60):
     dataset.append((make_vec(img), 1))
     
 np.random.shuffle(dataset)
@@ -53,7 +53,7 @@ gw, gb = T.grad(cost, [w, b])             # Compute the gradient of the cost
                                           # (we shall return to this in a
                                           # following section of this tutorial)
 
-N_valid = 200
+N_valid = 20
 validacion = (D[0][:N_valid], D[1][:N_valid])
 D = (D[0][N_valid:], D[1][N_valid:])
 # Compile
