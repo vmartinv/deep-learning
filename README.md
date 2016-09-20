@@ -1,18 +1,11 @@
 # Deep Learning Course
 
-Things done at Deep Learning course
+Things done at Deep Learning course. All (or most) of the code is on
+Python 3.
 
 # Requirements
-Pre-requisites (for Ubuntu or similar):
-> sudo apt-get install libblas-dev liblapack-dev libatlas-base-dev gfortran libfreetype6-dev libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python3-tk python3-pyqt5
-
-See also:
-http://stackoverflow.com/questions/27749664/python-matplotlib-cairo-error
-
-Use
-> pip3 install -r requirements.txt
-
-to install needed libraries
+For Arch Linux, install these packages (some of them are in the AUR:
+> python-pillow python-numpy python-matplotlib python-theano python-keras
 
 # Useful links
 
