@@ -1,15 +1,14 @@
-import numpy
+import numpy as np
 import theano
 import theano.tensor as T
-rng = numpy.random
+rng = np.random
 
 N = 400                                   # training sample size
 feats = 784                               # number of input variables
 
 # generate a dataset: D = (input_values, target_class)
 D = (rng.randn(N, feats), rng.randint(size=N, low=0, high=2))
-print(len(D))
-training_steps = 100
+training_steps = 3
 
 # Declare Theano symbolic variables
 x = T.dmatrix("x")
@@ -25,9 +24,6 @@ w = theano.shared(rng.randn(feats), name="w")
 # initialize the bias term
 b = theano.shared(0., name="b")
 
-print("Initial model:")
-print(w.get_value())
-print(b.get_value())
 
 # Construct Theano expression graph
 p_1 = 1 / (1 + T.exp(-T.dot(x, w) - b))   # Probability that target = 1
@@ -48,26 +44,13 @@ train = theano.function(
 predict = theano.function(inputs=[x], outputs=prediction)
 
 # Train
-batch_size = 20
-validacion = D[:20]
-print(len(D))
-D = D[20:]
-print(len(D))
-B = [D[j*batch_size : min(len(D), (j+1)*batch_size)] for j in range((batch_size+len(D)-1)//len(D))]
+batch_size = 10
+B = [(j*batch_size, min((j+1)*batch_size, N)) for j in range((N+batch_size-1)//batch_size)]
 for i in range(training_steps):
-    numpy.random.shuffle(B)
-    for batch in B:
-        pred, err = train(batch[0], batch[1])
+    np.random.shuffle(B)
+    for l,r in B:
+        pred, err = train(D[0][l:r], D[1][l:r])
 
-
-print("Final model:")
-print(w.get_value())
-print(b.get_value())
-print("target values for D:")
-print(D[1])
-print("prediction on D:")
-print(predict(D[0]))
-print("error:")
-print(((D[1]-predict(D[0]))**2).sum())
-print("error del batch de validacion:")
-print(((validacion[1]-predict(validacion[0]))**2).sum())
+match = ((y - prediction)**2).mean()
+count_matches = theano.function(inputs=[x, y], outputs=match)
+print("error: %f" % (count_matches(D[0], D[1])))

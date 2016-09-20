@@ -1,15 +1,33 @@
-import numpy
+import numpy as np
 import theano
 import theano.tensor as T
-rng = numpy.random
+import funcstp1
+rng = np.random
 
-N = 400                                   # training sample size
-feats = 784                               # number of input variables
+def make_vec(img):
+    img = funcstp1.normalize(img)
+    img = funcstp1.resize_image(img,28)
+    img = funcstp1.to_gray_scale(img)
+    return img.flatten()
 
 # generate a dataset: D = (input_values, target_class)
-D = (rng.randn(N, feats), rng.randint(size=N, low=0, high=2))
-training_steps = 10000
+print("Cargando imagenes...")
+np.random.seed(2342345)
+dataset = []
+for img in funcstp1.get_images("airplanes", 500):
+    dataset.append((make_vec(img), 0))
+for img in funcstp1.get_images("motorbikes", 500):
+    dataset.append((make_vec(img), 1))
+    
+np.random.shuffle(dataset)
+D = list(zip(*dataset))
+N = len(D[0])                         # training sample size
+print("%d imagenes cargadas." % (N))
+feats = len(D[0][0])                  # number of input variables
+       
+training_steps = 100
 
+print("Creando grafo de computación...")
 # Declare Theano symbolic variables
 x = T.dmatrix("x")
 y = T.dvector("y")
@@ -24,10 +42,6 @@ w = theano.shared(rng.randn(feats), name="w")
 # initialize the bias term
 b = theano.shared(0., name="b")
 
-print("Initial model:")
-print(w.get_value())
-print(b.get_value())
-
 # Construct Theano expression graph
 p_1 = 1 / (1 + T.exp(-T.dot(x, w) - b))   # Probability that target = 1
 prediction = p_1 > 0.5                    # The prediction thresholded
@@ -39,7 +53,11 @@ gw, gb = T.grad(cost, [w, b])             # Compute the gradient of the cost
                                           # (we shall return to this in a
                                           # following section of this tutorial)
 
+N_valid = 200
+validacion = (D[0][:N_valid], D[1][:N_valid])
+D = (D[0][N_valid:], D[1][N_valid:])
 # Compile
+print("Entrenando red neuronal con %d imagenes..." % (len(D[0])))
 train = theano.function(
           inputs=[x,y],
           outputs=[prediction, xent],
@@ -50,12 +68,17 @@ predict = theano.function(inputs=[x], outputs=prediction)
 for i in range(training_steps):
     pred, err = train(D[0], D[1])
 
-print("Final model:")
-print(w.get_value())
-print(b.get_value())
-print("target values for D:")
-print(D[1])
-print("prediction on D:")
-print(predict(D[0]))
-print("error:")
-print(((D[1]-predict(D[0]))**2).sum())
+match = ((y - prediction)**2).mean()
+count_matches = theano.function(inputs=[x, y], outputs=match)
+print("error: %f" % (count_matches(D[0], D[1])))
+print("error en validacion: %f" % (count_matches(validacion[0], validacion[1])))
+
+images = funcstp1.get_images("airplanes") + funcstp1.get_images("motorbikes")
+np.random.shuffle(images)
+for img in images:
+    if predict([make_vec(img)]) == [0]:
+        title = "Es un avión!"
+    else:
+        title = "Es una moto!"
+    funcstp1.show(img, title)
+    
