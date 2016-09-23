@@ -54,7 +54,8 @@ for dpv in range(0, 11, 1):
     #~ model.summary()
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer=RMSprop())
+                  optimizer=RMSprop(),
+                  metrics=['accuracy'])
 
     history = model.fit(X_train, Y_train,
                         batch_size=batch_size, nb_epoch=nb_epoch,
