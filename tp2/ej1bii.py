@@ -14,9 +14,9 @@ def make_vec(img):
 print("Cargando imagenes...")
 np.random.seed(2342345)
 dataset = []
-for img in funcstp1.get_images("airplanes", 60):
+for img in funcstp1.get_images("airplanes", 500):
     dataset.append((make_vec(img), 0))
-for img in funcstp1.get_images("motorbikes", 60):
+for img in funcstp1.get_images("motorbikes", 500):
     dataset.append((make_vec(img), 1))
     
 np.random.shuffle(dataset)
@@ -25,7 +25,7 @@ N = len(D[0])                         # training sample size
 print("%d imagenes cargadas." % (N))
 feats = len(D[0][0])                  # number of input variables
        
-training_steps = 100
+training_steps = 20
 
 print("Creando grafo de computación...")
 # Declare Theano symbolic variables
