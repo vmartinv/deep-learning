@@ -20,7 +20,7 @@ y = T.dvector("y")
 # are shared so they keep their values
 # between training iterations (updates)
 capa_interna = 10
-w1 = theano.shared(rng.randn(feats, capa_interna), name="w1")
+w1 = theano.shared(rng.randn(feats, capa_interna) * sqrt(2.0/feats), name="w1")
 w = theano.shared(rng.randn(capa_interna), name="w")
 
 # initialize the bias term
