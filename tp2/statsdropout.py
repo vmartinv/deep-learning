@@ -18,15 +18,12 @@ from keras.utils import np_utils
 
 batch_size = 128
 nb_classes = 10
-nb_epoch = 5
+nb_epoch = 20
 
 # the data, shuffled and split between train and test sets
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
 
-train_len = int(X_train.shape[0]*.25)
-X_train, y_train = X_train[:train_len], y_train[:train_len]
-
-X_train = X_train.reshape(train_len, 784)
+X_train = X_train.reshape(60000, 784)
 X_test = X_test.reshape(10000, 784)
 X_train = X_train.astype('float32')
 X_test = X_test.astype('float32')
@@ -39,7 +36,7 @@ Y_test = np_utils.to_categorical(y_test, nb_classes)
 
 print("Valor de Dropout", '\t', "Precisión")
 
-for dpv in range(0, 11, 1):
+for dpv in range(0, 10):
     dropout_val = dpv / 10.
     model = Sequential()
     model.add(Dense(512, input_shape=(784,)))
