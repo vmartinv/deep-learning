@@ -9,6 +9,8 @@ For Arch Linux, install these packages (some of them are in the AUR:
 
 # Useful links
 
+* https://github.com/fchollet/keras/tree/master/examples
+* https://keras.io
 * http://colah.github.io/posts/2014-10-Visualizing-MNIST/
 * http://deeplearning.net/software/theano/
 * http://www.scipy-lectures.org/
