@@ -44,7 +44,7 @@ model.add(Dense(512))
 model.add(Activation('sigmoid'))
 model.add(Dropout(0.2))
 model.add(Dense(10))
-model.add(Activation('sigmoid'))
+model.add(Activation('softmax'))
 
 model.summary()
 
