@@ -9,7 +9,9 @@ from keras.layers import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
 from keras import backend as K
 from scipy import misc
-from time import time
+from time import time, strftime, localtime
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 
 from keras.preprocessing.image import ImageDataGenerator
@@ -63,7 +65,7 @@ if K.image_dim_ordering() == 'th':
 else:
     input_shape = (img_rows, img_cols, 1)
 
-nombre_red = os.path.basename(__file__) + '-' + str(int(time()))
+nombre_red = os.path.basename(__file__) + '-' + strftime("%d-%b-%Y--%H-%M-%S", localtime())
 
 if LOAD_MODEL:
     print("Cargando modelo...")

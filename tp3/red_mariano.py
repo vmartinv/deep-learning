@@ -9,8 +9,10 @@ from keras.layers import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
 from keras import backend as K
 from scipy import misc
-from time import time
-# ~ import matplotlib.pyplot as plt
+from time import time, strftime, localtime
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
 
 from keras.preprocessing.image import ImageDataGenerator
 import shutil
@@ -63,7 +65,7 @@ if K.image_dim_ordering() == 'th':
 else:
     input_shape = (img_rows, img_cols, 1)
 
-nombre_red = os.path.basename(__file__) + '-' + str(int(time()))
+nombre_red = os.path.basename(__file__) + '-' + strftime("%d-%b-%Y--%H-%M-%S", localtime())
 
 if LOAD_MODEL:
     print("Cargando modelo...")
@@ -72,19 +74,62 @@ else:
     print("Armando modelo...")
     model = Sequential()
 
+    #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1],
+                            #~ border_mode='valid',
+                            #~ input_shape=input_shape))
+    #~ model.add(Activation('relu'))
+    #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
+    #~ model.add(Activation('relu'))
+    #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
+    #~ model.add(Activation('relu'))
+    #~ model.add(MaxPooling2D(pool_size=pool_size))
+    #~ model.add(Dropout(0.5))
+    
+    
     model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1],
                             border_mode='valid',
                             input_shape=input_shape))
     model.add(Activation('relu'))
     model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.2))
+
+    model.add(Activation('relu'))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
     model.add(Activation('relu'))
     model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
-    model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(Dropout(0.1))
+    model.add(Dropout(0.2))
+
+    model.add(Activation('relu'))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.2))
+
+    model.add(Activation('relu'))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.2))
+
+    model.add(Activation('relu'))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.2))
 
     model.add(Flatten())
-    model.add(Dense(128))
+    model.add(Dense(256))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
     model.add(Dense(nb_classes))
@@ -116,24 +161,24 @@ else:
     print("Guardando pesos en "+file_name+"...")
     model.save(file_name)
 
-# ~ # summarize history for accuracy
-# ~ plt.plot(history.history['acc'])
-# ~ plt.plot(history.history['val_acc'])
-# ~ plt.title(nombre_red+' model accuracy')
-# ~ plt.ylabel('accuracy')
-# ~ plt.xlabel('epoch')
-# ~ plt.legend(['train', 'val'], loc='upper right')
-# ~ plt.savefig(nombre_red+'-acc.png', bbox_inches='tight', dpi = 150)
-# ~ plt.clf()
-# ~ # summarize history for loss
-# ~ plt.plot(history.history['loss'])
-# ~ plt.plot(history.history['val_loss'])
-# ~ plt.title(nombre_red+' model loss')
-# ~ plt.ylabel('loss')
-# ~ plt.xlabel('epoch')
-# ~ plt.legend(['train', 'val'], loc='lower right')
-# ~ plt.savefig(nombre_red+'-loss.png', bbox_inches='tight', dpi = 150)
-# ~ plt.clf()
+    # summarize history for accuracy
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
+    plt.title(nombre_red+' model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'val'], loc='upper right')
+    plt.savefig(nombre_red+'-acc.png', bbox_inches='tight', dpi = 150)
+    plt.clf()
+    # summarize history for loss
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title(nombre_red+' model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'val'], loc='lower right')
+    plt.savefig(nombre_red+'-loss.png', bbox_inches='tight', dpi = 150)
+    plt.clf()
 
 print("Evaluando modelo...")
 score = model.evaluate_generator(train_generator, val_samples=50000)
