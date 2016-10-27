@@ -1,0 +1,19 @@
+#!/bin/bash
+
+run(){
+    python red_orig.py
+    python red_sigmoid.py
+    python red_no_densa.py
+    python red_mas_densa.py
+    python red_dropout.py 0.0
+    python red_dropout.py 0.1
+    python red_dropout.py 0.2
+    python red_dropout.py 0.3
+    python red_dropout.py 0.4
+    python red_dropout.py 0.5
+    python red_dropout.py 0.6
+    python red_dropout.py 0.7
+}
+
+run &| tee cola-log.txt
+

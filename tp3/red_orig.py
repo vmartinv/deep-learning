@@ -10,7 +10,7 @@ from keras.utils import np_utils
 from keras import backend as K
 from scipy import misc
 from time import time
-# ~ import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 from keras.preprocessing.image import ImageDataGenerator
 import shutil
@@ -52,13 +52,16 @@ imgDataGen = ImageDataGenerator(featurewise_center=False,
     horizontal_flip=False,
     vertical_flip=False,
     rescale=1/255.,
-    dim_ordering="tf")
+    dim_ordering=K.image_dim_ordering())
 
 train_generator = imgDataGen.flow_from_directory("dataset/train", target_size=(img_rows, img_cols), color_mode='grayscale', batch_size=batch_size)
 test_generator = imgDataGen.flow_from_directory("dataset/test", target_size=(img_rows, img_cols), color_mode='grayscale',  batch_size=batch_size)
 valid_generator = imgDataGen.flow_from_directory("dataset/valid", target_size=(img_rows, img_cols), color_mode='grayscale',  batch_size=batch_size)
 
-input_shape = (img_rows, img_cols, 1)
+if K.image_dim_ordering() == 'th':
+    input_shape = (1, img_rows, img_cols)
+else:
+    input_shape = (img_rows, img_cols, 1)
 
 nombre_red = os.path.basename(__file__) + '-' + str(int(time()))
 
@@ -98,24 +101,24 @@ else:
     print("Guardando pesos en "+file_name+"...")
     model.save(file_name)
 
-# ~ # summarize history for accuracy
-# ~ plt.plot(history.history['acc'])
-# ~ plt.plot(history.history['val_acc'])
-# ~ plt.title(nombre_red+' model accuracy')
-# ~ plt.ylabel('accuracy')
-# ~ plt.xlabel('epoch')
-# ~ plt.legend(['train', 'val'], loc='upper right')
-# ~ plt.savefig(nombre_red+'-acc.png', bbox_inches='tight', dpi = 150)
-# ~ plt.clf()
-# ~ # summarize history for loss
-# ~ plt.plot(history.history['loss'])
-# ~ plt.plot(history.history['val_loss'])
-# ~ plt.title(nombre_red+' model loss')
-# ~ plt.ylabel('loss')
-# ~ plt.xlabel('epoch')
-# ~ plt.legend(['train', 'val'], loc='lower right')
-# ~ plt.savefig(nombre_red+'-loss.png', bbox_inches='tight', dpi = 150)
-# ~ plt.clf()
+    # summarize history for accuracy
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
+    plt.title('Accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend(['train', 'val'], loc='lower right')
+    plt.savefig(nombre_red+'-acc.png', bbox_inches='tight', dpi = 150)
+    plt.clf()
+    # summarize history for loss
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['train', 'val'], loc='upper right')
+    plt.savefig(nombre_red+'-loss.png', bbox_inches='tight', dpi = 150)
+    plt.clf()
 
 print("Evaluando modelo...")
 score = model.evaluate_generator(train_generator, val_samples=50000)
