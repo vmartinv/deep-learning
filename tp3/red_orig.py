@@ -16,6 +16,7 @@ from keras.utils import np_utils
 from keras import backend as K
 from scipy import misc
 from time import time
+import matplotlib.pyplot as plt
 
 from keras.preprocessing.image import ImageDataGenerator
 import shutil
@@ -61,10 +62,10 @@ def get_images(base, tam=None):
                 print(str(last)+"% Completado")
         r.append((np.array(misc.imread(fileName)), clase))
     return (np.array([img for img,_ in r]), np.array([int(c)-32 for _,c in r]))
-
-(X_train, y_train) = get_images('dataset/train', 0.02)
-(X_valid, y_valid) = get_images('dataset/valid', 0.1)
-(X_test, y_test) = get_images('dataset/test', 0.1)
+ 
+(X_train, y_train) = get_images('dataset/train', 1.0)
+(X_valid, y_valid) = get_images('dataset/valid', 1.0)
+(X_test, y_test) = get_images('dataset/test', 1.0)
 
 if K.image_dim_ordering() == 'th':
     X_train = X_train.reshape(X_train.shape[0], 1, img_rows, img_cols)
@@ -111,14 +112,40 @@ model.add(Dropout(0.5))
 model.add(Dense(nb_classes))
 model.add(Activation('softmax'))
 
+print("Compilando...")
 model.compile(loss='categorical_crossentropy',
               optimizer='adadelta',
               metrics=['accuracy'])
-
-model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch,
+   
+nombre_red = os.path.basename(__file__)
+print("Entrenando red: "+nombre_red)
+history = model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch,
           verbose=1, validation_data=(X_valid, Y_valid))
 
-#model.save('model'+str(int(time()))+'.h5')
+timestamp = str(int(time()))
+file_name = nombre_red+'-model-'+timestamp+'.h5'
+print("Guardando pesos en "+file_name+"...")
+model.save(file_name)
+
+# summarize history for accuracy
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title(nombre_red+' model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'val'], loc='upper right')
+plt.savefig(nombre_red+'-acc-'+timestamp+'.png', bbox_inches='tight', dpi = 150)
+plt.clf()
+# summarize history for loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title(nombre_red+' model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'val'], loc='lower right')
+plt.savefig(nombre_red+'-loss-'+timestamp+'.png', bbox_inches='tight', dpi = 150)
+plt.clf()
+
 
 score = model.evaluate(X_train, Y_train, verbose=0)
 print('Train score:', score[0])
