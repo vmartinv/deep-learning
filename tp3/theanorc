@@ -1,0 +1,20 @@
+
+[global]
+floatX = float32
+device = gpu
+
+[lib]
+cnmem = 0.75
+# 0: not enabled.
+# 0 < N <= 1: use this fraction of the total GPU memory (clipped to .95 for driver memory).
+# > 1: use this number in megabytes (MB) of memory.
+
+[nvcc]
+flags=-D_FORCE_INLINES
+fastmath = True
+
+[cuda]
+root = /usr/local/cuda-7.5/
+
+[blas]
+ldflags = "-L/usr/lib/ -lblas"
