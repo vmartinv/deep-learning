@@ -124,18 +124,19 @@ Y_test = np_utils.to_categorical(Y_test, nb_classes)
 sys.stdout.write("Guardando archivos h5...")
 sys.stdout.flush()
 
+os.makedirs('dataseth5')
 # Create a new file using defaut properties.
-fTrain = h5py.File('dataset/train.h5','w')
-fValid = h5py.File('dataset/valid.h5','w')
-fTest = h5py.File('dataset/test.h5','w')
+fTrain = h5py.File('dataseth5/train.h5','w')
+fValid = h5py.File('dataseth5/valid.h5','w')
+fTest = h5py.File('dataseth5/test.h5','w')
 
 # Create a dataset under the Root group.
-X_train = fTrain.create_dataset("X_train",data=X_train)
-Y_train = fTrain.create_dataset("Y_train",data=Y_train)
-X_valid = fValid.create_dataset("X_valid",data=X_valid)
-Y_valid = fValid.create_dataset("Y_valid",data=Y_valid)
-X_test = fTest.create_dataset("X_test",data=X_test)
-Y_test = fTest.create_dataset("Y_test",data=Y_test)
+X_train = fTrain.create_dataset("X",data=X_train)
+Y_train = fTrain.create_dataset("Y",data=Y_train)
+X_valid = fValid.create_dataset("X",data=X_valid)
+Y_valid = fValid.create_dataset("Y",data=Y_valid)
+X_test = fTest.create_dataset("X",data=X_test)
+Y_test = fTest.create_dataset("Y",data=Y_test)
 
 # Close the file before exiting
 fTrain.close()
