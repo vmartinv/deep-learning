@@ -12,7 +12,7 @@ pool_size = (2, 2)
 # convolution kernel size
 kernel_size = (3, 3)
 
-trainer = base.LazyTrainer('red_mas_densa')
+trainer = base.LazyTrainer('red_poco_densa')
 #~ trainer.train_data.preview()
 
 if LOAD_MODEL:
@@ -24,19 +24,14 @@ else:
     model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1],
                             border_mode='valid',
                             input_shape=base.input_shape))
-    model.add(Activation('sigmoid'))
+    model.add(Activation('relu'))
     model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
-    model.add(Activation('sigmoid'))
+    model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
     model.add(Dropout(0.25))
 
     model.add(Flatten())
-    model.add(Dense(128))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(128))
-    model.add(Activation('relu'))    
-    model.add(Dense(base.nb_classes))
+    model.add(Dense(nb_classes))
     model.add(Activation('softmax'))
 
     print("Compilando...")
