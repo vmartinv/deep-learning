@@ -30,7 +30,7 @@ nb_filters = 32
 # size of pooling area for max pooling
 pool_size = (2, 2)
 # convolution kernel size
-kernel_size = (3, 3)
+kernel_size = (2, 2)
 
 def prepare_show(face):
     m = face.min()
@@ -107,45 +107,28 @@ else:
     #~ model.add(Dropout(0.5))
     
     
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1],
+    model.add(Convolution2D(nb_filters, 3, 3,
                             border_mode='valid',
                             input_shape=input_shape))
     model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
+    model.add(Convolution2D(nb_filters, 3, 3))
     model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(Dropout(0.2))
-
-    
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(Dropout(0.2))
-    
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
     model.add(MaxPooling2D(pool_size=pool_size))
     model.add(Dropout(0.2))
 
     model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
     model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
     model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
     model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.2))
+
     model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
     model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
     model.add(Dropout(0.2))
     
@@ -165,6 +148,11 @@ else:
     model.add(Dense(128))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
+
+    model.add(Dense(64))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.5))
+
     model.add(Dense(nb_classes))
     model.add(Activation('softmax'))
 

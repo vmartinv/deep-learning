@@ -4,3 +4,5 @@ logfile.txt
 preview
 dataset.tar.gz
 log.txt
+*.h5
+*.png

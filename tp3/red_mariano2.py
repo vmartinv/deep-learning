@@ -5,7 +5,7 @@ import os
 from keras.datasets import mnist
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D
+from keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, Merge
 from keras.utils import np_utils
 from keras import backend as K
 from scipy import misc
@@ -14,12 +14,12 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 
-from keras.preprocessing.image import ImageDataGenerator
+from keras.preprocessing.image import ImageDataGenerator, DirectoryIterator
 import shutil
 
 batch_size = 128
 nb_classes = 91
-nb_epoch = 50
+nb_epoch = 12
 
 LOAD_MODEL = False
 
@@ -30,25 +30,108 @@ nb_filters = 32
 # size of pooling area for max pooling
 pool_size = (2, 2)
 # convolution kernel size
-kernel_size = (3, 3)
+kernel_size = (4, 2)
+
+
+def miModelo(kernel_size):
+    model = Sequential()
+     
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1],
+                            border_mode='valid',
+                            input_shape=input_shape))
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.2))
+    model.add(Flatten())
+    return model
+
+    
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.2))
+    
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.2))
+    
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.2))
+    
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.2))
+
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+    model.add(Activation('relu'))
+    model.add(ZeroPadding2D((kernel_size[0]-1, kernel_size[1]-1)))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.2))
+    model.add(Flatten())
+    return model
+
 
 def prepare_show(face):
     m = face.min()
     M = face.max()
     return (face-m)/(M-m)
 
-class ImageDataGeneratorConInvert(ImageDataGenerator):
-    def __init__(self, invert=False, **kwargs):
-        super(ImageDataGeneratorConInvert, self).__init__(**kwargs)
-        self.invert = invert
+class ImageDataGeneratorWrapper(ImageDataGenerator):
+    def flow_from_directory(self, directory,
+                                target_size=(256, 256), color_mode='rgb',
+                                classes=None, class_mode='categorical',
+                                batch_size=32, shuffle=True, seed=None,
+                                save_to_dir=None, save_prefix='', save_format='jpeg'):
+            return DirectoryIteratorWrapper(
+                directory, self,
+                target_size=target_size, color_mode=color_mode,
+                classes=classes, class_mode=class_mode,
+                dim_ordering=self.dim_ordering,
+                batch_size=batch_size, shuffle=shuffle, seed=seed,
+                save_to_dir=save_to_dir, save_prefix=save_prefix, save_format=save_format)
 
-    def standardize(self, x):
-        x=super(ImageDataGeneratorConInvert, self).standardize(x)
-        if self.invert:
-            x = 1-x
-        return x
+class DirectoryIteratorWrapper(DirectoryIterator):
+    def next(self):
+        batch_x, batch_y=super(DirectoryIteratorWrapper, self).next()
+        return [batch_x, batch_x, batch_x], batch_y
 
-imgDataGen = ImageDataGeneratorConInvert(featurewise_center=False,
+imgDataGen = ImageDataGeneratorWrapper(featurewise_center=False,
     samplewise_center=False,
     featurewise_std_normalization=False,
     samplewise_std_normalization=False,
@@ -61,7 +144,7 @@ imgDataGen = ImageDataGeneratorConInvert(featurewise_center=False,
     channel_shift_range=0.,
     fill_mode='nearest',
     cval=0.,
-    invert=True,
+    
     horizontal_flip=False,
     vertical_flip=False,
     rescale=1/255.,
@@ -70,16 +153,6 @@ imgDataGen = ImageDataGeneratorConInvert(featurewise_center=False,
 train_generator = imgDataGen.flow_from_directory("dataset/train", target_size=(img_rows, img_cols), color_mode='grayscale', batch_size=batch_size)
 test_generator = imgDataGen.flow_from_directory("dataset/test", target_size=(img_rows, img_cols), color_mode='grayscale',  batch_size=batch_size)
 valid_generator = imgDataGen.flow_from_directory("dataset/valid", target_size=(img_rows, img_cols), color_mode='grayscale',  batch_size=batch_size)
-
-nombre_red = os.path.basename(__file__) + '-' + strftime("%d-%b-%Y--%H-%M-%S", localtime())
-PREVIEW_DIR = nombre_red+'-preview'
-shutil.rmtree(PREVIEW_DIR, ignore_errors=True)
-os.makedirs(PREVIEW_DIR)
-# genera una vista previa de las imagenes procesadas
-for X_batch, y_batch in train_generator:
-    for i,img in enumerate(X_batch):
-        misc.imsave(os.path.join(PREVIEW_DIR, str(i)+'.png'), prepare_show(img.reshape(img_rows, img_cols)))
-    break
 
 if K.image_dim_ordering() == 'th':
     input_shape = (1, img_rows, img_cols)
@@ -93,62 +166,8 @@ if LOAD_MODEL:
     model = load_model("red_orig.py-model-1477598524.h5")
 else:
     print("Armando modelo...")
-    model = Sequential()
+    
 
-    #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1],
-                            #~ border_mode='valid',
-                            #~ input_shape=input_shape))
-    #~ model.add(Activation('relu'))
-    #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
-    #~ model.add(Activation('relu'))
-    #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
-    #~ model.add(Activation('relu'))
-    #~ model.add(MaxPooling2D(pool_size=pool_size))
-    #~ model.add(Dropout(0.5))
-    
-    
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1],
-                            border_mode='valid',
-                            input_shape=input_shape))
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(Dropout(0.2))
-
-    
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(Dropout(0.2))
-    
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(Dropout(0.2))
-
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    model.add(Activation('relu'))
-    model.add(ZeroPadding2D((1, 1)))
-    model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(Dropout(0.2))
-    
     #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
     #~ model.add(Activation('relu'))
     #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
@@ -159,9 +178,11 @@ else:
     #~ model.add(ZeroPadding2D((1, 1)))
     #~ model.add(MaxPooling2D(pool_size=pool_size))
     #~ model.add(Dropout(0.2))
+    merged = Merge([miModelo((4,2)), miModelo((2,4)), miModelo((3,3))], mode='concat')
 
+    model = Sequential()
+    model.add(merged)
 
-    model.add(Flatten())
     model.add(Dense(128))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
