@@ -13,7 +13,9 @@ run(){
     python red_dropout.py 0.5
     python red_dropout.py 0.6
     python red_dropout.py 0.7
+    python red_mariano.py
+    python red_mariano3.py
 }
 
-run &| tee cola-log.txt
+run | tee cola-log.txt
 
