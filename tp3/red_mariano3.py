@@ -103,8 +103,8 @@ else:
                   optimizer='adadelta',
                   metrics=['accuracy'])
 
-    trainer.train(model, nb_epoch=2, samples_per_epoch=10240, nb_val_samples=5000) 
-    #~ trainer.train(model, nb_epoch=12, samples_per_epoch=269018, nb_val_samples=25000) #usa todo el dataset
+    #~ trainer.train(model, nb_epoch=2, samples_per_epoch=10240, nb_val_samples=5000) 
+    trainer.train(model, nb_epoch=12, samples_per_epoch=269018, nb_val_samples=25000) #usa todo el dataset
     trainer.save_last_train_history()
 
 trainer.evaluate(model)
