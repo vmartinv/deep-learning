@@ -5,8 +5,6 @@ from keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D
 
 LOAD_MODEL = False
 
-# input image dimensions
-img_rows, img_cols = 32, 32
 # number of convolutional filters to use
 nb_filters = 32
 # size of pooling area for max pooling
