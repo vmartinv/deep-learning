@@ -17,8 +17,8 @@ cant={}
 
 data = base.H5Dataset("dataseth5/train.h5", "Todo el conjunto de training")
 total = data.get_data()[0].shape[0]
-#~ acc['Todos'] = data.evaluate(model)[1]
-#~ cant['Todos'] = total
+acc['Todos'] = data.evaluate(model)[1]
+cant['Todos'] = total
 
 for ch in range(0, 91):
     data = base.H5Dataset("dataseth5/train.h5", "Caracter " + chr(ch+32))
@@ -27,7 +27,7 @@ for ch in range(0, 91):
     #~ print("Guardando vista previa en %s..."%(name))
     #~ data.preview(name)
     score = data.evaluate(model)
-    if score is not None and score[1]*data.get_data()[0].shape[0]>1000:
+    if score is not None and data.get_data()[0].shape[0]>1000:
         acc[chr(ch+32)]=score[1]
         cant[chr(ch+32)]=data.get_data()[0].shape[0]
         
@@ -46,8 +46,13 @@ for ch in range(0, 91):
     plt.title('Accuracy por caracter')
     graphfile=argv[1].replace('--model.h5', '--accbychar.png')
     for i, (a, q) in enumerate(zip(acc.values(), cant.values())):
-        plt.text(a + 0.01, i + .20, "%.2f%%"%(q/float(total)), color='black', fontweight='bold')
+        plt.text(a + 0.01, i, "%.2f%%"%(q/float(total)*100.), color='black', fontweight='bold')
     plt.savefig(graphfile, bbox_inches='tight', dpi = 300)
+    plt.clf()
+
+    
+    
+    
     plt.clf()
     
 print(acc)
