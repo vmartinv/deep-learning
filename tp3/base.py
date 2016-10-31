@@ -65,7 +65,7 @@ def to_categorical(y):#to_categorical([0 0 1 0 0]) = 2, porque el 1 esta en la p
 class LazyDataset(object):
     def __init__(self, directory, name=None, datagen=default_datagen, batch_size=128, **kwargs):
         self.name = name if name else directory
-        self.gen_gen = lambda: datagen.flow_from_directory(directory=directory, target_size=(img_rows, img_cols), color_mode='grayscale', batch_size=batch_size, **kwargs)
+        self.gen_gen = lambda: (print('Cargando %s...'%(self.name)), datagen.flow_from_directory(directory=directory, target_size=(img_rows, img_cols), color_mode='grayscale', batch_size=batch_size, **kwargs))[1]
         self.gen = None
         
     def get_data(self):
@@ -155,6 +155,7 @@ class H5Dataset(object):
         self.X = self.Y = None
     
     def load_data(self):
+        print("Cargando %s..." % (self.name) )
         with h5py.File(self.h5file,'r') as hf:
             self.X = np.array(hf.get('X'))
             self.Y = np.array(hf.get('Y'))
@@ -167,10 +168,27 @@ class H5Dataset(object):
 
     def evaluate(self, model, verbose=0, **kwargs):
         X, Y = self.get_data()
-        score = model.evaluate(X, Y, verbose=verbose, **kwargs)
-        print(self.name+' loss:', score[0])
-        print(self.name+' accuracy:', score[1])
-    
+        if X.shape[0]:
+            score = model.evaluate(X, Y, verbose=verbose, **kwargs)
+            print(self.name+' loss:', score[0])
+            print(self.name+' accuracy:', score[1])
+            return score
+        else:
+            print("No hay data!")
+        return None
+
+    def filter(self, f):
+        X, Y = self.get_data()
+        self.X = []
+        self.Y = []
+        for x,y in zip(X,Y):
+            if f(x, y):
+                self.X.append(x)
+                self.Y.append(y)
+        self.X = np.array(self.X)
+        self.Y = np.array(self.Y)
+        print("Se filtraron %d imagenes." % (self.X.shape[0]))
+            
     # genera una vista previa de las imagenes procesadas
     def preview(self, directory="preview"):
         def prepare_show(face):

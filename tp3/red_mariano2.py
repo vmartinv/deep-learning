@@ -1,5 +1,5 @@
 import base
-from keras.models import Sequential, load_model
+from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, Merge
 from keras.preprocessing.image import DirectoryIterator
@@ -43,8 +43,6 @@ imgDataGen = ImageDataGeneratorWrapper(featurewise_center=False,
     rescale=1/255.,
     dim_ordering=K.image_dim_ordering()).add(lambda x:1-x)
     
-
-LOAD_MODEL = False
 
 # number of convolutional filters to use
 nb_filters = 32
@@ -131,55 +129,52 @@ def miModelo(kernel_size):
     model.add(Flatten())
     return model
     
-if LOAD_MODEL:
-    model = load_model("red_orig.py-model-1477598524.h5")
-else:
-    print("Armando red...")
-    model = Sequential()
-    
+print("Armando red...")
+model = Sequential()
 
-    #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    #~ model.add(Activation('relu'))
-    #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    #~ model.add(Activation('relu'))
-    #~ model.add(ZeroPadding2D((1, 1)))
-    #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
-    #~ model.add(Activation('relu'))
-    #~ model.add(ZeroPadding2D((1, 1)))
-    #~ model.add(MaxPooling2D(pool_size=pool_size))
-    #~ model.add(Dropout(0.2))
-    merged = Merge([miModelo((4,2)), miModelo((2,4)), miModelo((3,3))], mode='concat')
 
-    model = Sequential()
-    model.add(merged)
+#~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+#~ model.add(Activation('relu'))
+#~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+#~ model.add(Activation('relu'))
+#~ model.add(ZeroPadding2D((1, 1)))
+#~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
+#~ model.add(Activation('relu'))
+#~ model.add(ZeroPadding2D((1, 1)))
+#~ model.add(MaxPooling2D(pool_size=pool_size))
+#~ model.add(Dropout(0.2))
+merged = Merge([miModelo((4,2)), miModelo((2,4)), miModelo((3,3))], mode='concat')
 
-    model.add(Dense(128))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(base.nb_classes))
-    model.add(Activation('softmax'))
+model = Sequential()
+model.add(merged)
+
+model.add(Dense(128))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+model.add(Dense(base.nb_classes))
+model.add(Activation('softmax'))
 
 
 #model = Sequential()
-    #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1],
-                            #~ border_mode='valid',
-                            #~ input_shape=input_shape))
-    #~ model.add(MaxPooling2D(pool_size=(2, 2)))
-    #~ model.add(Convolution2D(15, 3, 3, activation='relu'))
-    #~ model.add(MaxPooling2D(pool_size=(2, 2)))
-    #~ model.add(Dropout(0.2))
-    #~ model.add(Flatten())
-    #~ model.add(Dense(128, activation='relu'))
-    #~ model.add(Dense(base.nb_classes))
-    #~ model.add(Dense(base.nb_classes, activation='softmax'))
+#~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1],
+                        #~ border_mode='valid',
+                        #~ input_shape=input_shape))
+#~ model.add(MaxPooling2D(pool_size=(2, 2)))
+#~ model.add(Convolution2D(15, 3, 3, activation='relu'))
+#~ model.add(MaxPooling2D(pool_size=(2, 2)))
+#~ model.add(Dropout(0.2))
+#~ model.add(Flatten())
+#~ model.add(Dense(128, activation='relu'))
+#~ model.add(Dense(base.nb_classes))
+#~ model.add(Dense(base.nb_classes, activation='softmax'))
 
-    print("Compilando...")
-    model.compile(loss='categorical_crossentropy',
-                  optimizer='adadelta',
-                  metrics=['accuracy'])
+print("Compilando...")
+model.compile(loss='categorical_crossentropy',
+              optimizer='adadelta',
+              metrics=['accuracy'])
 
-    trainer.train(model, nb_epoch=2, samples_per_epoch=10240, nb_val_samples=5000) 
-    #~ trainer.train(model, nb_epoch=12, samples_per_epoch=269018, nb_val_samples=25000) #usa todo el dataset
-    trainer.save_last_train_history()
+#~ trainer.train(model, nb_epoch=2, samples_per_epoch=10240, nb_val_samples=5000) 
+trainer.train(model, nb_epoch=50, samples_per_epoch=269018, nb_val_samples=25000) #usa todo el dataset
+trainer.save_last_train_history()
 
 trainer.evaluate(model)
