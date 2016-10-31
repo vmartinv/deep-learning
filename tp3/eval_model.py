@@ -13,10 +13,12 @@ if len(argv)!=2:
 model = load_model(argv[1])
 
 acc={}
+cant={}
 
 data = base.H5Dataset("dataseth5/train.h5", "Todo el conjunto de training")
-acc['Todos'] = data.evaluate(model)[1]
 total = data.get_data()[0].shape[0]
+#~ acc['Todos'] = data.evaluate(model)[1]
+#~ cant['Todos'] = total
 
 for ch in range(0, 91):
     data = base.H5Dataset("dataseth5/train.h5", "Caracter " + chr(ch+32))
@@ -26,20 +28,25 @@ for ch in range(0, 91):
     #~ data.preview(name)
     score = data.evaluate(model)
     if score is not None and score[1]*data.get_data()[0].shape[0]>1000:
-        acc[chr(ch+32)]=score[1]*data.get_data()[0].shape[0]/total
+        acc[chr(ch+32)]=score[1]
+        cant[chr(ch+32)]=data.get_data()[0].shape[0]
         
     if ' ' in acc:
-        acc['espacio'] = acc[' ']
+        acc['Espacios'] = acc[' ']
+        cant['Espacios'] = cant[' ']
         del acc[' ']
+        del cant[' ']
 
     y_pos = np.arange(len(acc))
     plt.barh(y_pos, acc.values(), align='center', alpha=0.4)
     plt.yticks(y_pos, acc.keys())
-    plt.xlabel('Accuracy/Cantidad')
+    plt.xlabel('Accuracy')
     plt.ylabel('Caracter')
     plt.grid(True)
     plt.title('Accuracy por caracter')
-    graphfile=argv[1].replace('--model.h5', '--accbychar.png') 
+    graphfile=argv[1].replace('--model.h5', '--accbychar.png')
+    for i, (a, q) in enumerate(zip(acc.values(), cant.values())):
+        plt.text(a + 0.01, i + .20, "%.2f%%"%(q/float(total)), color='black', fontweight='bold')
     plt.savefig(graphfile, bbox_inches='tight', dpi = 300)
     plt.clf()
     
