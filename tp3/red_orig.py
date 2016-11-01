@@ -10,8 +10,14 @@ pool_size = (2, 2)
 # convolution kernel size
 kernel_size = (3, 3)
 
-trainer = base.LazyTrainer('red_orig')
-#~ trainer.train_data.preview()
+
+#~ trainer = base.Trainer('red_orig', train_data=base.dataset("dataset/train", "Train"),
+                                    #~ valid_data=base.dataset("dataset/valid", "Valid"),
+                                    #~ test_data=base2.dataset("dataset/test", "Test"))
+trainer = base.Trainer('red_orig', train_data=base.dataset("dataseth5/train.h5", "Train"),
+                                    valid_data=base.dataset("dataseth5/valid.h5", "Valid"),
+                                    test_data=base.dataset("dataseth5/test.h5", "Test"))
+trainer.train_data.preview()
 
 print("Armando red...")
 model = Sequential()

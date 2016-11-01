@@ -12,7 +12,13 @@ nb_filters = 32
 pool_size = (2, 2)
 # convolution kernel size
 kernel_size = (3, 3)
-trainer = base.H5Trainer('red_mariano')
+
+#~ trainer = base.Trainer('redMarianoPro', train_data=base.dataset("dataset/train", "Train"),
+                                    #~ valid_data=base.dataset("dataset/valid", "Valid"),
+                                    #~ test_data=base.dataset("dataset/test", "Test"))
+trainer = base.Trainer('redMarianoPro', train_data=base.dataset("dataseth5/train.h5", "Train"),
+                                    valid_data=base.dataset("dataseth5/valid.h5", "Valid"),
+                                    test_data=base.dataset("dataseth5/test.h5", "Test"))
 
 #~ not_importants=['^', '`', 'U']
 #~ not_importants=set(map(lambda x:ord(x)-32, not_importants))
@@ -78,8 +84,10 @@ model.add(ZeroPadding2D((1, 1)))
 model.add(MaxPooling2D(pool_size=pool_size))
 model.add(Dropout(0.2))
 
+#~ No Estaba
 #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
 #~ model.add(Activation('relu'))
+#~ model.add(ZeroPadding2D((1, 1)))
 #~ model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))  
 #~ model.add(Activation('relu'))
 #~ model.add(ZeroPadding2D((1, 1)))
@@ -91,6 +99,9 @@ model.add(Dropout(0.2))
 
 
 model.add(Flatten())
+model.add(Dense(256))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
 model.add(Dense(128))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
@@ -118,16 +129,21 @@ def top3(y_true, y_pred):
 
         
 print("Compilando...")
+#~ model.compile(loss='categorical_crossentropy',
+              #~ optimizer='adadelta',
+              #~ metrics=['accuracy', top3 ])
+              
 model.compile(loss='categorical_crossentropy',
               optimizer='adadelta',
-              metrics=['accuracy', top3 ])
+              metrics=['accuracy' ])
+              
 
 #~ trainer.train(model, nb_epoch=2, samples_per_epoch=10240, nb_val_samples=5000) 
-trainer.train(model, nb_epoch=10, samples_per_epoch=269018) #usa todo el dataset
-#~ trainer.train(model, nb_epoch=3, samples_per_epoch=100, nb_val_samples=100) #usa todo el dataset
+trainer.train(model, nb_epoch=100, samples_per_epoch=269018) #usa todo el dataset
+#~ trainer.train(model, nb_epoch=3, samples_per_epoch=100) #usa todo el dataset
 #~ trainer.save_last_train_history()
 
-#~ model = load_model('red_orig--30-Oct-2016--22-48--model.h5')
+#~ model = load_model('redMarianoPro--01-Nov-2016--10-40--model.h5')
 
 trainer.evaluate(model)
 
@@ -135,7 +151,7 @@ trainer.evaluate(model)
 #~ valid_data.evaluate(model)
 
 test_data=base.H5Dataset("dataseth5/test.h5", "Test")
-X, Y = test_data.get_data()
+X, Y = test_data.get_XY()
 #~ X = X[:50000]
 #~ Y = Y[:50000]
 Yclases = []
@@ -168,3 +184,7 @@ for i in range(len(CM)):
 	for j in range(len(CM[i])):
 		if i != j and CM[i][j]> tolerancia*sum(CM[i]):
 			print( "%s %s %.2f" %(chr(i+32), chr(j+32), CM[i][j]/float(sum(CM[i])) ))
+
+
+#~ badmeasure = np.arange(91)
+

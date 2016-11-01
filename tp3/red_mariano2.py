@@ -51,9 +51,9 @@ pool_size = (2, 2)
 # convolution kernel size
 kernel_size = (4, 2)
 
-trainer = base.LazyTrainer('red_mariano2', train_data=base.LazyDataset("dataset/train", "Train", imgDataGen)
-                                         , valid_data=base.LazyDataset("dataset/valid", "Valid", imgDataGen)
-                                         , test_data=base.LazyDataset("dataset/test", "Test", imgDataGen))
+trainer = base.Trainer('red_mariano2', train_data=base.dataset("dataset/train", "Train", imgDataGen),
+                                    valid_data=base.dataset("dataset/valid", "Valid", imgDataGen),
+                                    test_data=base.dataset("dataset/test", "Test", imgDataGen))
 #~ trainer.train_data.preview()
 
 def miModelo(kernel_size):
@@ -173,8 +173,8 @@ model.compile(loss='categorical_crossentropy',
               optimizer='adadelta',
               metrics=['accuracy'])
 
-#~ trainer.train(model, nb_epoch=2, samples_per_epoch=10240, nb_val_samples=5000) 
-trainer.train(model, nb_epoch=50, samples_per_epoch=269018, nb_val_samples=25000) #usa todo el dataset
+trainer.train(model, nb_epoch=2, samples_per_epoch=10240, nb_val_samples=5000) 
+#~ trainer.train(model, nb_epoch=50, samples_per_epoch=269018, nb_val_samples=25000) #usa todo el dataset
 trainer.save_last_train_history()
 
 trainer.evaluate(model)
