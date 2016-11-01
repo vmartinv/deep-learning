@@ -74,8 +74,10 @@ class LazyDataset(object):
     
     def evaluate(self, model, val_samples=50000, **kwargs):
         score = model.evaluate_generator(self.get_data(), val_samples=val_samples, **kwargs)
-        print(self.name+' loss:', score[0])
-        print(self.name+' accuracy:', score[1])
+        for i in range(0,len(model.metrics_names)):
+			print(self.name + ' ' + model.metrics_names[i], score[i])
+		#print(self.name+' loss:', score[0])
+		#print(self.name+' accuracy:', score[1])
     
     # genera una vista previa de las imagenes procesadas
     def preview(self, directory="preview"):

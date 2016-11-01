@@ -7,6 +7,7 @@ from scipy import misc
 from keras.utils import np_utils
 from keras import backend as K
 from keras.preprocessing.image import ImageDataGenerator
+from skimage.filters import threshold_adaptive
 from PIL import Image
 import shutil
 import h5py
@@ -14,11 +15,6 @@ import h5py
 nb_classes = 91
 # input image dimensions
 img_rows, img_cols = 32, 32
-
-def prepare_show(face):
-    m = face.min()
-    M = face.max()
-    return (face-m)/(M-m)
 
 # the data, shuffled and split between train and test sets
 def get_images(base, tam=None):
@@ -65,53 +61,72 @@ imgDataGen = ImageDataGenerator(
     samplewise_center=False,
     featurewise_std_normalization=False,
     samplewise_std_normalization=False,
-    zca_whitening=True,
-    rotation_range=0.,
+    zca_whitening=False,
+    rotation_range=15,
     width_shift_range=0.,
     height_shift_range=0.,
     shear_range=0.,
-    zoom_range=0.,
+    zoom_range=[1,1.15],
     channel_shift_range=0.,
-    fill_mode='nearest',
-    cval=0.,
+    fill_mode='constant',
+    cval=0,
     horizontal_flip=False,
     vertical_flip=False,
     rescale=None,
     dim_ordering="th")
-#imgGenerator = imgDataGen.flow_from_directory("dataset/train", color_mode='grayscale', target_size=(32,32), seed=1337, batch_size=batch_size, save_to_dir=PREVIEW_DIR)
-imgDataGen.fit(X_train)
+
+#sys.stdout.write("fitting...")
+#sys.stdout.flush()
+#imgDataGen.fit(X_train)
+#print("OK")
 
 
-X_train = X_train.astype('float32')
-X_test = X_test.astype('float32')
-X_train /= 255
-X_test /= 255
+
+
+#X_train = X_train.astype('float32')
+#X_test = X_test.astype('float32')
+#X_valid = X_valid.astype('float32')
+#X_train /= 255
+#X_test /= 255
+#X_valid /= 255
 print('X_train shape:', X_train.shape)
 print(X_train.shape[0], 'train samples')
 print(X_valid.shape[0], 'valid samples')
 print(X_test.shape[0], 'test samples')
 
-PREVIEW_DIR = 'preview'
-shutil.rmtree(PREVIEW_DIR, ignore_errors=True)
-os.makedirs(PREVIEW_DIR)
-
-# genera una vista previa de las imagenes procesadas
-def prev(cant):
-    X_batch = X_train[0:cant]
-    Y_batch = Y_train[0:cant]
-    if not os.path.exists(PREVIEW_DIR):
-        os.makedirs(PREVIEW_DIR)
-    for i,img in enumerate(X_batch):
-        path = os.path.join(PREVIEW_DIR, str(i)+'.png')
-        newImg = prepare_show(img.reshape(img_rows, img_cols))
-        misc.imsave(path, newImg)
-        
-prev(200)
-
+# binarize
+X_train = [np.logical_not(threshold_adaptive(image=i[0], block_size=7)) for i in X_train]
+X_test = [np.logical_not(threshold_adaptive(image=i[0], block_size=7)) for i in X_test]
+X_valid = [np.logical_not(threshold_adaptive(image=i[0], block_size=7)) for i in X_valid]
 # convert class vectors to binary class matrices
 Y_train = np_utils.to_categorical(Y_train, nb_classes)
 Y_valid = np_utils.to_categorical(Y_valid, nb_classes)
 Y_test = np_utils.to_categorical(Y_test, nb_classes)
+
+
+#batch = imgDataGen.flow(X_train,Y_train, batch_size=20, save_to_dir=PREVIEW_DIR)
+
+
+PREVIEW_DIR = 'preview-ft'
+shutil.rmtree(PREVIEW_DIR, ignore_errors=True)
+os.makedirs(PREVIEW_DIR)
+
+# genera una vista previa de las imagenes procesadas
+def prev(cant=None):
+    if not cant:
+        cant = X_train.shape[0]
+    X_batch = X_train[0:cant]
+    if not os.path.exists(PREVIEW_DIR):
+        os.makedirs(PREVIEW_DIR)
+    for i,img in enumerate(X_batch):
+        path = os.path.join(PREVIEW_DIR, str(i)+'.png')
+        newImg = img.reshape(img_rows, img_cols)
+        misc.imsave(path, newImg)
+        
+prev(200)
+
+
+
 
 
 
@@ -126,9 +141,9 @@ sys.stdout.flush()
 
 os.makedirs('dataseth5')
 # Create a new file using defaut properties.
-fTrain = h5py.File('dataseth5/train.h5','w')
-fValid = h5py.File('dataseth5/valid.h5','w')
-fTest = h5py.File('dataseth5/test.h5','w')
+fTrain = h5py.File('dataseth5/train2.h5','w')
+fValid = h5py.File('dataseth5/valid2.h5','w')
+fTest = h5py.File('dataseth5/test2.h5','w')
 
 # Create a dataset under the Root group.
 X_train = fTrain.create_dataset("X",data=X_train)
