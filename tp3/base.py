@@ -123,6 +123,18 @@ class H5Dataset(BaseDataset):
         if self.X is None: self.load_data()
         return self.X, self.Y
 
+    def filter(self, f):
+        X, Y = self.get_XY()
+        self.X = []
+        self.Y = []
+        for x,y in zip(X,Y):
+            if f(x, y):
+                self.X.append(x)
+                self.Y.append(y)
+        self.X = np.array(self.X)
+        self.Y = np.array(self.Y)
+        print("Se filtraron %d imagenes." % (self.X.shape[0]))
+        
     def get_gen(self):
         X, Y = self.get_XY()
         datagen = self.datagen if self.datagen is not None else ImageDataGenerator()
@@ -170,9 +182,24 @@ class Trainer(object):
         self.test_data.evaluate(model)
 
     def save_model(self, model):
+        restore=False
+        if 'top3' in model.model.metrics_names:
+            idx=model.model.metrics_names.index('top3')
+            metric_name = model.model.metrics_names[idx]
+            del model.model.metrics_names[idx]
+            metric = model.model.metrics[idx-1]
+            del model.model.metrics[idx-1]
+            metric_tensor = model.model.metrics_tensors[idx-1]
+            del model.model.metrics_tensors[idx-1]
+            restore = True
+    
         file_name = self.namegen.get_model_file('model.h5')
         print("Guardando pesos en "+file_name+"...")
         model.save(file_name)
+        if restore:
+            model.model.metrics_names.insert(idx, metric_name)
+            model.model.metrics.insert(idx-1, metric)
+            model.model.metrics_tensors.insert(idx-1, metric_tensor)
         
     def save_last_train_history(self):
         print("Guardando historial...")

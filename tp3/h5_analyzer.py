@@ -14,7 +14,7 @@ if len(argv)!=2:
     print("Usage python h5_analyzer.py <db.h5>")
     exit(1)
 
-X, Y = base.H5Dataset(argv[1], "Conjunto").get_data()
+X, Y = base.H5Dataset(argv[1], "Conjunto").get_XY()
 total = X.shape[0]
 
 cant = defaultdict(int)
@@ -25,9 +25,13 @@ cant['Espacios']=cant[' ']
 del cant[' ']
 
 cant = sorted(cant.items(), key=operator.itemgetter(1))
-for c,q in cant:
-    print("{}: {} ({:.2f}%)".format(c, q, q/float(total)*100.))
+for i,(c,q) in enumerate(cant):
+    print("(#{}) {}: {} ({:.2f}%)".format(len(cant)-i, c, q, q/float(total)*100.))
 print('Total: {}'.format(total))
+
+print(list(reversed(cant)))
+
+print('Guardando grafico en {}...'.format(GRAPHFILE))
 qotros = sum([q for _,q in cant if q/float(total)*100<THRESHOLD])
 cant = [(c,q) for c,q in cant if q/float(total)*100>=THRESHOLD]
 cant = sorted(cant+[('Otros', qotros)], key=operator.itemgetter(1))
