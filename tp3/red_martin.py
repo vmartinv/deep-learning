@@ -14,24 +14,15 @@ pool_size = (2, 2)
 # convolution kernel size
 kernel_size = (3, 3)
 
-#~ trainer = base.Trainer('redMarianoPro', train_data=base.dataset("dataset/train", "Train"),
-                                    #~ valid_data=base.dataset("dataset/valid", "Valid"),
-                                    #~ test_data=base.dataset("dataset/test", "Test"))
-trainer = base.Trainer('red_martin', train_data=base.dataset("dataseth5/train.h5", "Train"),
-                                    valid_data=base.dataset("dataseth5/valid.h5", "Valid"),
-                                    test_data=base.dataset("dataseth5/test.h5", "Test"))
 
 info=[('Espacios', 13027), ('e', 8197), ('t', 6022), ('a', 5327), ('o', 5061), ('i', 4502), ('n', 4480), ('s', 4219), ('r', 3950), ('h', 3939), ('d', 2659), ('l', 2632), ('u', 1790), ('c', 1679), ('f', 1636), ('m', 1533), ('w', 1432), ('g', 1260), ('y', 1174), ('p', 1138), ('b', 988), (',', 827), ('.', 685), ('v', 651), ('k', 372), ('T', 266), ('-', 224), ('A', 176), ('S', 173), ('"', 149), ('x', 146), ('I', 146), ('B', 120), ("'", 108), ('C', 105), ('H', 101), ('1', 98), ('M', 95), ('G', 91), ('L', 76), ('P', 73), ('q', 70), ('E', 70), ('W', 60), ('R', 60), ('(', 60), (')', 59), ('F', 56), ('j', 55), (';', 52), ('0', 47), ('z', 40), ('D', 37), ('2', 36), ('N', 34), ('O', 33), ('J', 33), (':', 26), ('9', 25), ('3', 24), ('V', 23), ('5', 19), ('K', 17), ('6', 16), ('4', 16), ('8', 15), ('!', 13), ('?', 11), ('7', 11), ('Y', 10), ('U', 7), ('#', 4), ('Q', 2), ('Z', 1), ('*', 1), ('&', 1)]
 info[0]=(' ', info[0][1])
-#~ TOT_CLASS = 80
-#~ importants=set(map(lambda x:ord(x[0])-32, info[:TOT_CLASS]))
-#~ trainer.train_data.filter(lambda _,y: base.to_categorical(y) in importants)
+TOT_CLASS = 60
+importants=set(map(lambda x:ord(x[0])-32, info[:TOT_CLASS]))
+
+#~ not_importants=['^', '`', 'U']
 #~ not_importants=set(map(lambda x:ord(x)-32, not_importants))
 #~ trainer.train_data.filter(lambda _,y: base.to_categorical(y) not in not_importants)
-
-not_importants=['^', '`', 'U']
-not_importants=set(map(lambda x:ord(x)-32, not_importants))
-trainer.train_data.filter(lambda _,y: base.to_categorical(y) not in not_importants)
 
 
 print("Armando red...")
@@ -87,22 +78,27 @@ model.add(Dropout(0.5))
 model.add(Dense(128))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
-#~ model.add(Dense(TOT_CLASS))
+model.add(Dense(TOT_CLASS))
 
 
-#~ def mapper(x):
-    #~ M = np.concatenate((np.identity(TOT_CLASS), np.ones((TOT_CLASS, base.nb_classes-TOT_CLASS))), axis=1)
-    #~ return K.dot(x, M)
+def mapper(x):
+    M = [[0]*TOT_CLASS]*base.nb_classes
+    print(np.array(M).shape)
+    for i,v in enumerate(importants):
+        M[v]=[i==j for j in range(TOT_CLASS)]
+    M = np.transpose(np.array(M).astype('float32'))   
+    #~ M = (np.concatenate((np.identity(TOT_CLASS), np.ones((TOT_CLASS, base.nb_classes-TOT_CLASS))), axis=1)).astype('float32')
+    return K.dot(x, M)
 
-#~ def mapper_output_shape(input_shape):
-    #~ shape = list(input_shape)
-    #~ assert len(shape) == 2  # only valid for 2D tensors
-    #~ shape[-1] = base.nb_classes
-    #~ return tuple(shape)
+def mapper_output_shape(input_shape):
+    shape = list(input_shape)
+    assert len(shape) == 2  # only valid for 2D tensors
+    shape[-1] = base.nb_classes
+    return tuple(shape)
 
-#~ model.add(Lambda(mapper, output_shape=mapper_output_shape))
+model.add(Lambda(mapper, output_shape=mapper_output_shape))
 
-#~ model.add(Activation('relu'))
+model.add(Activation('relu'))
 model.add(Dense(base.nb_classes))
 model.add(Activation('softmax'))
 
@@ -122,6 +118,14 @@ model.compile(loss='categorical_crossentropy',
               #~ metrics=['accuracy' ])
               
 
+#~ trainer = base.Trainer('redMarianoPro', train_data=base.dataset("dataset/train", "Train"),
+                                    #~ valid_data=base.dataset("dataset/valid", "Valid"),
+                                    #~ test_data=base.dataset("dataset/test", "Test"))
+trainer = base.Trainer('red_martin', train_data=base.dataset("dataseth5/train.h5", "Train"),
+                                    valid_data=base.dataset("dataseth5/valid.h5", "Valid"),
+                                    test_data=base.dataset("dataseth5/test.h5", "Test"))
+trainer.train_data.filter(lambda _,y: base.to_categorical(y) in importants)
+                                    
 trainer.train(model, nb_epoch=100, samples_per_epoch=268928) #usa todo el dataset
 #~ trainer.train(model, nb_epoch=3, samples_per_epoch=128) #usa todo el dataset
 #~ trainer.save_last_train_history()
