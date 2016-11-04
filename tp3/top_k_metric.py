@@ -30,3 +30,6 @@ def top3(y_true, y_pred):
 #~ model.compile(loss='categorical_crossentropy',
               #~ optimizer='adadelta',
               #~ metrics=['accuracy', top3 ])
+
+def top3(y_true, y_pred):
+    return top_k_categorical_accuracy(y_true, y_pred,3)

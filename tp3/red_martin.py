@@ -74,9 +74,9 @@ model.compile(loss='categorical_crossentropy',
               metrics=['accuracy', top3 ])
 model.summary()
 
-trainer = base.Trainer('red_martin', train_data=base.dataset("dataseth5-featMem/train.h5", "Train"),
-                                    valid_data=base.dataset("dataseth5-featMem/valid.h5", "Valid"),
-                                    test_data=base.dataset("dataseth5-featMem/test.h5", "Test"))
+trainer = base.Trainer('red_martin', train_data=base.dataset("dataseth5-featMean/train.h5", "Train"),
+                                    valid_data=base.dataset("dataseth5-featMean/valid.h5", "Valid"),
+                                    test_data=base.dataset("dataseth5-featMean/test.h5", "Test"))
 
 trainer.train(model, nb_epoch=100, samples_per_epoch=269018) #usa todo el dataset
 #~ trainer.train(model, nb_epoch=3, samples_per_epoch=128) #usa todo el dataset

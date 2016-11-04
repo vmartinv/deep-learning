@@ -169,10 +169,15 @@ class Trainer(object):
     def __init__(self, name, train_data, valid_data, test_data):
         self.namegen = NameGen(name)
         self.train_data, self.valid_data, self.test_data = train_data, valid_data, test_data    
+    
+    def save_model_struct(self, model):
+        with open(self.namegen.get_model_file('model-struct.json'), "w") as text_file:
+            text_file.write(model.to_json())
 
     def train(self, model, samples_per_epoch=269018, nb_epoch=12, verbose=1, nb_val_samples=25000, **kwargs):
         print("Entrenando red: "+self.namegen.get_name())
-        checkpointer = ModelCheckpoint(filepath=self.namegen.get_model_file('model-train.h5'), monitor='val_acc', verbose=1, save_best_only=True)
+        self.save_model_struct(model)
+        checkpointer = ModelCheckpoint(filepath=self.namegen.get_model_file('model-train-weights.h5'), save_weights_only=True, monitor='val_acc', verbose=1, save_best_only=True)
         self.history = model.fit_generator(self.train_data.get_gen(), samples_per_epoch=samples_per_epoch, nb_epoch=nb_epoch,
                   verbose=verbose, validation_data=self.valid_data.get_gen(), nb_val_samples=nb_val_samples, callbacks=[checkpointer], **kwargs)
         self.save_model(model)
@@ -197,6 +202,7 @@ class Trainer(object):
     
         file_name = self.namegen.get_model_file('model.h5')
         print("Guardando pesos en "+file_name+"...")
+        self.save_model_struct(model)
         model.save(file_name)
         if restore:
             model.model.metrics_names.insert(idx, metric_name)
