@@ -21,3 +21,12 @@ def top_k_categorical_accuracy(y_true, y_pred, k=5):
     target class is within the top-k predictions provided
     '''
     return K.mean(in_top_k(y_pred, K.argmax(y_true, axis=-1), k))
+
+def top3(y_true, y_pred):
+    return top_k_categorical_accuracy(y_true, y_pred,3)
+
+#~ Ejemplo de como usar esto:
+#~ from top_k_metric import top3
+#~ model.compile(loss='categorical_crossentropy',
+              #~ optimizer='adadelta',
+              #~ metrics=['accuracy', top3 ])

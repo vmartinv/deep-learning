@@ -11,6 +11,7 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 from keras.preprocessing.image import ImageDataGenerator
 from shutil import rmtree
+from keras.callbacks import ModelCheckpoint
 import h5py
 
 nb_classes = 91
@@ -171,8 +172,9 @@ class Trainer(object):
 
     def train(self, model, samples_per_epoch=269018, nb_epoch=12, verbose=1, nb_val_samples=25000, **kwargs):
         print("Entrenando red: "+self.namegen.get_name())
+        checkpointer = ModelCheckpoint(filepath=self.namegen.get_model_file('model-train.h5'), monitor='val_acc', verbose=1, save_best_only=True)
         self.history = model.fit_generator(self.train_data.get_gen(), samples_per_epoch=samples_per_epoch, nb_epoch=nb_epoch,
-                  verbose=verbose, validation_data=self.valid_data.get_gen(), nb_val_samples=nb_val_samples, **kwargs)
+                  verbose=verbose, validation_data=self.valid_data.get_gen(), nb_val_samples=nb_val_samples, callbacks=[checkpointer], **kwargs)
         self.save_model(model)
 
     def evaluate(self, model):
