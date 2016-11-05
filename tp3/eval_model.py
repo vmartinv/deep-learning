@@ -7,15 +7,28 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import defaultdict
 import operator
+from keras.models import model_from_json
+from top_k_metric import top3
+import os
 
 THRESHOLD = 0.2
-
-if len(argv)!=3:
-    print("Usage python eval_model.py <model.h5> <db.h5>")
+USAGE = "Usage python eval_model.py <db.h5> (<model.h5> | <model.json> <weights.h5>)"
+if len(argv)==3:
+    model = load_model(argv[2])
+elif len(argv)==4:
+    with open(argv[2], "r") as text_file:
+        json = text_file.read()
+        model = model_from_json(json)
+    model.compile(loss='categorical_crossentropy',
+                  optimizer='adadelta',
+                  metrics=['accuracy', top3 ])
+    model.summary()
+    model.load_weights(argv[3])
+else:
+    print(USAGE)
     exit(1)
 
-model = load_model(argv[1])
-X, Y = base.H5Dataset(argv[2]).get_XY()
+X, Y = base.H5Dataset(argv[1]).get_XY()
 total = X.shape[0]
 cases = defaultdict(lambda: ([], []))
 
@@ -24,10 +37,14 @@ cant={}
 
 def get_acc(name, X, Y, verbose=0):
     print("Evaluando {}...".format(name))
-    acc = model.evaluate(X, Y, verbose=verbose)[1]
+    score = model.evaluate(X, Y, verbose=verbose)
+    acc = score[1]
     print "\r"+" "*80+"\r",
     print("Cantidad: {}".format(X.shape[0]))
-    print("Accuracy: {:.2f}".format(acc))
+    print("Accuracy: {:.4f}".format(acc))
+    if len(score)==3:
+        top3 = score[2]
+        print("Top3: {:.4f}".format(top3))
     print
     return acc
     
@@ -40,20 +57,22 @@ for x,y in zip(X, Y):
 cases = {ch:(np.array(X), np.array(Y)) for ch,(X,Y) in cases.iteritems() if len(X)/float(total)*1000>=THRESHOLD}
 
 cases = sorted(cases.items(), key=lambda (__, (_, Y)):Y.shape[0], reverse=True)
+proccessed = 0
 for i, (nch, (Xp, Yp)) in enumerate(cases):
     ch = chr(nch+32)
-    print "({:.0f}%)".format(i/float(len(cases))*100.),
+    print "({:.0f}%)".format(proccessed/float(total)*100.),
     cacc = get_acc('caracter {}'.format(ch), Xp, Yp)
     acc[ch]=(cacc, Xp.shape[0])
-        
+    proccessed += Xp.shape[0]
     if ' ' in acc:
         acc['Espacios'] = acc[' ']
         del acc[' ']
 print('(100%)')
 print(acc)
 
-graphfile=argv[1].replace('--model', '')
-graphfile=graphfile.replace('.h5', '--accbychar.png')
+graphfile=argv[2].replace('--model-train-weights', '').replace('--model', '')
+graphfile=graphfile.replace('models/', 'histories/')
+graphfile=graphfile.replace(os.path.splitext(graphfile)[1], '--accbychar.png')
 print('Creando grafico {}...'.format(graphfile))
 plt.rcParams["figure.figsize"] = [8, 12]
 y_pos = np.arange(len(acc))

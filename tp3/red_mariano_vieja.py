@@ -130,11 +130,7 @@ model.summary()
               #~ optimizer='adadelta',
               #~ metrics=['accuracy' ])
         
-
-#~ trainer = base.Trainer('redMarianoPro', train_data=base.dataset("dataset/train", "Train"),
-                                    #~ valid_data=base.dataset("dataset/valid", "Valid"),
-                                    #~ test_data=base.dataset("dataset/test", "Test"))
-trainer = base.Trainer('redMarianoPro', train_data=base.dataset("dataseth5/train.h5", "Train"),
+trainer = base.Trainer('redMarianoVieja', train_data=base.dataset("dataseth5/train.h5", "Train"),
                                     valid_data=base.dataset("dataseth5/valid.h5", "Valid"),
                                     test_data=base.dataset("dataseth5/test.h5", "Test"))
 #~ trainer.train(model, nb_epoch=2, samples_per_epoch=10240, nb_val_samples=5000) 
@@ -145,45 +141,4 @@ trainer.train(model, nb_epoch=100, samples_per_epoch=269018) #usa todo el datase
 #~ model = load_model('redMarianoPro--01-Nov-2016--10-40--model.h5')
 
 trainer.evaluate(model)
-
-#~ valid_data=base.H5Dataset("dataseth5/valid.h5", "Valid")
-#~ valid_data.evaluate(model)
-
-test_data=base.H5Dataset("dataseth5/test.h5", "Test")
-X, Y = test_data.get_XY()
-#~ X = X[:50000]
-#~ Y = Y[:50000]
-Yclases = []
-for yi in Y:
-	Yclases.append(np.argmax(yi))
-
-Ypredict = model.predict(X)
-YPredictclases = []
-for yi in Ypredict:
-	YPredictclases.append(np.argmax(yi))
-
-#~ print(Yclases)
-#~ print(YPredictclases)
-
-
-#~ Yclases = [0,0,0,1,1,1,2,2,2]
-#~ YPredictclases = [1,1,2, 0,0,1, 2,2,1]
-
-CM = confusion_matrix(Yclases,YPredictclases)
-
-
-CM2 = []
-for i in range(0,len(CM)):
-	CM2.append( list( map( lambda x : x / float(sum(CM[i])), CM[i]) ) ) 
-total = 269018
-cantidades = [41275, 105, 598, 51, 0, 0, 15, 741, 95, 93, 8, 2, 2612, 770, 2970, 16, 245, 237, 77, 98, 67, 79, 65, 29, 75, 97, 91, 84, 0, 0, 0, 63, 0, 639, 449, 429, 255, 318, 285, 365, 452, 687, 76, 104, 315, 761, 368, 191, 453, 7, 334, 486, 767, 119, 90, 413, 7, 69, 4, 0, 0, 0, 0, 0, 0, 17241, 3272, 5796, 8078, 27347, 4642, 3962, 11608, 14989, 216, 1265, 8665, 5174, 15241, 15733, 4068, 176, 13660, 13418, 19458, 5555, 2165, 3858, 341, 3894, 95]
-tolerancia = 0.1
-for i in range(len(CM)):
-	actual = []
-	for j in range(len(CM[i])):
-		if i != j and CM[i][j]> tolerancia*sum(CM[i]):
-			print( "%s %s %.2f" %(chr(i+32), chr(j+32), CM[i][j]/float(sum(CM[i])) ))
-
-
-#~ badmeasure = np.arange(91)
 

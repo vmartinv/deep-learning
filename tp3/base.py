@@ -105,11 +105,11 @@ class LazyDataset(BaseDataset):
 class H5Dataset(BaseDataset):
     def __init__(self, h5file, name=None, datagen=None, batch_size=128, **kwargs):
         super(H5Dataset, self).__init__(name if name else h5file)
-        self.gen_gen = lambda: (print('Cargando {}...'.format(self.name)), datagen.flow_from_directory(directory=directory, target_size=(img_rows, img_cols), color_mode='grayscale', batch_size=batch_size, **kwargs))[1]
         self.h5file = h5file
         self.batch_size = batch_size
         self.X = self.Y = None
         self.datagen = datagen
+        self.load_data()
     
     def load_data(self):
         print("Cargando {}...".format(self.name))
@@ -181,6 +181,7 @@ class Trainer(object):
         self.history = model.fit_generator(self.train_data.get_gen(), samples_per_epoch=samples_per_epoch, nb_epoch=nb_epoch,
                   verbose=verbose, validation_data=self.valid_data.get_gen(), nb_val_samples=nb_val_samples, callbacks=[checkpointer], **kwargs)
         self.save_model(model)
+        self.save_last_train_history()
 
     def evaluate(self, model):
         print("Evaluando modelo...")
