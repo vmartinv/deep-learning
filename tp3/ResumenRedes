@@ -1,0 +1,68 @@
+    python red_orig.py
+        Train: 0.690317
+        Test: 0.662784
+        Valid: 0.670776        
+
+    python red_sigmoid.py
+        Train: 0.522878
+        Test: 0.514466
+        Valid: 0.509111
+
+    python red_poco_densa.py
+        Train acc: 0.680407
+        Valid acc: 0.647418
+        Test acc: 0.649117
+
+    python red_mas_densa.py
+        Train acc: 0.714474
+        Valid acc: 0.691017
+        Test acc: 0.683983
+
+    python red_dropout.py 0.0
+        Train: 0.429588
+        Test: 0.675731
+        Valid: 0.682445
+
+    python red_dropout.py 0.1
+        Train: 0.798473
+        Test: 0.685602
+        Valid: 0.695712
+
+    python red_dropout.py 0.2
+        Train: 0.777873
+        Test: 0.687000
+        Valid: 0.697630
+
+    python red_dropout.py 0.3
+        Train: 0.753776
+        Test: 0.682605
+        Valid: 0.693274
+
+    python red_dropout.py 0.4
+        Train: 0.734115
+        Test: 0.670856
+        Valid: 0.680906
+
+    python red_dropout.py 0.5
+        Train: 0.706682
+        Test:  0.656290
+        Valid: 0.665102
+
+    python red_dropout.py 0.6
+        Train: 0.682745
+        Test: 0.634251
+        Valid: 0.645061
+
+    python red_dropout.py 0.7
+        Train: 0.623581
+        Test: 0.609575
+        Valid: 0.619885
+
+    python red_mariano.py
+        Train: 0.821192
+        Train top3: 0.935062
+        Test: 0.780391
+        Test top3: 0.900855
+        Valid: 0.794437
+        Valid top3: 0.915801
+

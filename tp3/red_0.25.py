@@ -10,13 +10,14 @@ pool_size = (2, 2)
 # convolution kernel size
 kernel_size = (3, 3)
 
-#~ trainer = base.Trainer('red_poco_densa', train_data=base.dataset("dataset/train", "Train"),
+
+#~ trainer = base.Trainer('red_orig', train_data=base.dataset("dataset/train", "Train"),
                                     #~ valid_data=base.dataset("dataset/valid", "Valid"),
-                                    #~ test_data=base.dataset("dataset/test", "Test"))
-trainer = base.Trainer('red_poco_densa', train_data=base.dataset("dataseth5/train.h5", "Train"),
-                                    valid_data=base.dataset("dataseth5/valid.h5", "Valid"),
-                                    test_data=base.dataset("dataseth5/test.h5", "Test"))
-#~ trainer.train_data.preview()
+                                    #~ test_data=base2.dataset("dataset/test", "Test"))
+trainer = base.Trainer('red_0.25', train_data=base.dataset("dataseth5-0.25/train.h5", "Train"),
+                                    valid_data=base.dataset("dataseth5-0.25/valid.h5", "Valid"),
+                                    test_data=base.dataset("dataseth5-0.25/test.h5", "Test"))
+trainer.train_data.preview()
 
 print("Armando red...")
 model = Sequential()
@@ -31,6 +32,9 @@ model.add(MaxPooling2D(pool_size=pool_size))
 model.add(Dropout(0.25))
 
 model.add(Flatten())
+model.add(Dense(128))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
 model.add(Dense(base.nb_classes))
 model.add(Activation('softmax'))
 
@@ -39,8 +43,8 @@ model.compile(loss='categorical_crossentropy',
               optimizer='adadelta',
               metrics=['accuracy'])
 
-#~ trainer.train(model, nb_epoch=2, samples_per_epoch=10240, nb_val_samples=5000) 
-trainer.train(model, nb_epoch=12, samples_per_epoch=269018, nb_val_samples=25000) #usa todo el dataset
+# trainer.train(model, nb_epoch=2, samples_per_epoch=10240, nb_val_samples=5000) 
+trainer.train(model, nb_epoch=12, samples_per_epoch=67254)
 trainer.save_last_train_history()
 
 trainer.evaluate(model)

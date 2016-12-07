@@ -9,6 +9,7 @@ from collections import defaultdict
 import operator
 from keras.models import model_from_json
 from top_k_metric import top3
+from sklearn.metrics import confusion_matrix
 import os
 
 THRESHOLD = 0.2
@@ -89,5 +90,27 @@ for i, (ch, a, q) in enumerate(asdf):
     plt.text(a + 0.01, i, "%.2f%%"%(q/float(total)*100.), color='black', fontweight='bold')
 plt.savefig(graphfile, bbox_inches='tight', dpi = 300)
 plt.clf()
+
+
+def myConfusion(X,Y,Ypredict):
+    Yclases = []
+    for yi in Y:
+        Yclases.append(np.argmax(yi))
+
+    YPredictclases = []
+    for yi in Ypredict:
+        YPredictclases.append(np.argmax(yi))
+
+    return confusion_matrix(Yclases,YPredictclases)
+
+Ypredict = model.predict(X)
+CM = myConfusion(X,Y,Ypredict)
+tolerancia = 0.1
+for i in range(len(CM)):
+	actual = []
+	for j in range(len(CM[i])):
+		if i != j and CM[i][j]> tolerancia*sum(CM[i]):
+			print( "%s %s %.2f" %(chr(i+32), chr(j+32), CM[i][j]/float(sum(CM[i])) ))
+
 
 

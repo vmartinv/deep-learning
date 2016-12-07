@@ -13,10 +13,10 @@ pool_size = (2, 2)
 # convolution kernel size
 kernel_size = (3, 3)
 
-#~ trainer = base.Trainer('red_dropout'+ '_' + str(dropout), train_data=base.dataset("dataset/train", "Train"),
+#~ trainer = base.Trainer('red_dropout'+ '-' + str(dropout), train_data=base.dataset("dataset/train", "Train"),
                                     #~ valid_data=base.dataset("dataset/valid", "Valid"),
                                     #~ test_data=base.dataset("dataset/test", "Test"))
-trainer = base.Trainer('red_dropout'+ '_' + str(dropout), train_data=base.dataset("dataseth5/train.h5", "Train"),
+trainer = base.Trainer('red_dropout'+ '-' + str(dropout), train_data=base.dataset("dataseth5/train.h5", "Train"),
                                     valid_data=base.dataset("dataseth5/valid.h5", "Valid"),
                                     test_data=base.dataset("dataseth5/test.h5", "Test"))
 #~ trainer.train_data.preview()
