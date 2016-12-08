@@ -1,0 +1,16 @@
+Cambio con respecto a la original: maxlen = 20
+
+Loss por iteración
+
+Iteration 1:  1.9223
+Iteration 2:  1.6883
+Iteration 3:  1.6330
+Iteration 4:  1.6050
+Iteration 5:  1.5880
+Iteration 6:  1.5787
+Iteration 7:  1.5731
+Iteration 8:  1.5694
+Iteration 9:  1.5758
+Iteration 10: 1.5777
+Iteration 11: 1.6745
+Iteration 12: 1.6670
