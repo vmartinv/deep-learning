@@ -43,7 +43,7 @@ def load_images(pathFiles):
 
 
 
-dataList = load_images("./lines/")
+dataList = load_images("./rawdata/lines/")
 
 def to_float(face):
     face = np.float32(face)

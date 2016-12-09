@@ -1,0 +1,68 @@
+https://github.com/CIFASIS/deep-learning-course/raw/master/tps/TP4.pdf
+
+Descripcion de archivos:
+    -  lstm_text_generation.py la red original que nos fue dada.
+    -  spanish.py el archivo que carga el dataset en el .h5 original que nos fue dado.
+    -  spanish-lesslines.py como el dataset cuenta con muchas líneas tomamos las primeras 100 lineas de cada una para no quedarnos sin memoria en el entrenamiento. Ésto es debido a que en el entrenamiento cargamos todo el dataset a memoria. Se podría evitar con un dataset generator para texto aunque el entrenamiento en este caso que cargamos todo a memoria es mucho más rápido y verificamos que los resultados con el criterio de estas 100 lineas son muy similares.
+    -  dataset/lesslines.h5 archivo que genera el módulo anterior.
+    -  red_orig: ésta es la red original, pero adaptada para que use "lesslines.h5" en lugar de el texto de nietzche
+    -  utilis.py: contiene funciones utiles usadas en los otros archivos
+    -  eval_model.py: modulo para evaluar (generar texto) de modelos ya entrenados.
+
+Probamos ciertas diferencias a la hora de evaluar el modelo como:
+    - modificar la diversidad luego del espacio:
+
+
+Probamos hacer la vectorizacion como preprocesamiento para ver si era más rápido pero el .h5 ocupa demasiado espacio y no se notan mejorías de velocidad considerables
+
+red original entrenada: red_orig.py--07-Dec-2016--13-17--best-model.h5
+
+prediccion de la red original con los espacios tuneados:
+----- diversity: 0.1
+----- Generating with seed: "tengo mucha hambre, que venga la pizza p"
+tengo mucha hambre, que venga la pizza programa de recupie para la actual de grand toma una programa y que se se por la compañado por la estado compañía de el temporada restitución a producir en una de la programa para la comperado o hace al recupiembo de una de distinció por la ver de 1970 no 1997. la internacional para su apartido internacionalizado a tras la leguado de la programa en la obra se enfermedad y a la temporada a la veces 
+----- diversity: 0.2
+----- Generating with seed: "tengo mucha hambre, que venga la pizza p"
+tengo mucha hambre, que venga la pizza para marco de su programa y tras la marca de terrora restitución de boras se entre la programa de el programa de internacional de el final a alta el temanio de 2007) y la le contra el familia se realización de produció la localidad que marca y para un programa a su barro de marca de vierna de grand oche internaciones en el realizada como el programa a el secuente para la programa con incerce a la c
+----- diversity: 0.3
+----- Generating with seed: "tengo mucha hambre, que venga la pizza p"
+tengo mucha hambre, que venga la pizza por el 2007).  la propuesta compañía no por participario por marca se marca como junto a la prograca como a tras mante en la época con su incluye se trasamen una espacio de compañado a la región de los portució el programa al un comporada grande y su capital a producir de su carte (procesión a la profesiones con 3 19 gran temporadadas a la ciudad marco para parte de altitud la estado por la ingrand
+----- diversity: 0.4
+----- Generating with seed: "tengo mucha hambre, que venga la pizza p"
+tengo mucha hambre, que venga la pizza pies que la sector de viento viendo que toma por la expesado su propulos unidos en cuando para la que fue portel de los habitantes fue asterior de marta a la provincia por distinca de el arrocas con el protectiva de ha especie. su carre la artículo los comandantes a la habitación de canta, para la internacional a periona fue colores con una mantal de último compes con su primer temporada y con la l
+
+
+Este es el resultado de usar la red_con_dict (que usa el dataset que tiene el texto filtrado)
+> python eval_modeldataseth5/con-dict.h5 models/red_con_dict.py--08-Dec-2016--15-22--best-model.h5 
+    ----- diversity: 0.1
+    ----- Generating with seed: "hijo de silvio. reino durante 31 anos. l"
+    hijo de silvio. reino durante 31 anos. la provincia de esta que esta a la familia de algunas para muy se desconocido de la verdena de habitarte en gran trabajador de su primer estado para la catedral de la muestra se desconocido fue por destrucion con el sur de tras la catedral es el grupo de la provincia de la construccion de algunas altos en su cantidad de particular el 15 mujeres de esta construir todos los arcos y desconocidas y al 
+    ----- diversity: 0.2
+    ----- Generating with seed: "hijo de silvio. reino durante 31 anos. l"
+    hijo de silvio. reino durante 31 anos. la provincia de medidos en 1976 en 1997 con una servicion de un servicio de su carrera en la provincia de partido en el caracter al carece con su primer entre a su cantidad basica al partido general la guerra en la familia cances con el metro de manera el cargo de la republica de particular el primer cargo de su unica de madrid, esta recuperado en el progrecion a la territorial mas contra musica pa
+    ----- diversity: 0.3
+    ----- Generating with seed: "hijo de silvio. reino durante 31 anos. l"
+    hijo de silvio. reino durante 31 anos. la batalla de la descubre de anteriormente a la vida y que gran la tercera por el mundo estado se recuperal en su hefor su bisica , nacional de humedada no con personal de grandes km fueron por su familia zargacion de una llamada de la estacion de 2000 con su primer internacional mas fueron de que interes para el nombre de viazada o con consecuencia y los de la orienta y como medida por un recupera
+    ----- diversity: 0.4
+    ----- Generating with seed: "hijo de silvio. reino durante 31 anos. l"
+    hijo de silvio. reino durante 31 anos. los historias por su primer mundo de primero de la muerte y tanto en contirtamientos presenten con la vida con los lugares en comunidad de la artistica, de medio la familia habitada a antes esta esta al carece a protegienda en la guerra de la recibe de su cantando de antes en el que bene con una galicia de la construccion un antigua 1974 el estado para el descon el estacion de que tomar instempenad
+    ----- diversity: 0.5
+    ----- Generating with seed: "hijo de silvio. reino durante 31 anos. l"
+    hijo de silvio. reino durante 31 anos. los representas unidades. mas sentido a la de naver el exposicion o mas del nombre y iniciativa el 13 o fueron encuentra vida la compania y el segundo de traquien la restauar el cargo con el  asistan los primeros originales de que la descasa de famosa y distancia de la obra que el padria universidad es la que con el internacional con el lugar rotado de republica no transferia de su familia y kont y
+    ----- diversity: 0.55
+    ----- Generating with seed: "hijo de silvio. reino durante 31 anos. l"
+    hijo de silvio. reino durante 31 anos. le boletros o contro vienes de la muerte para y angular har adunchica vellango o peligro vitale para el que es un torte artistica en particular, , la representecion hermana 2008 contra un pantara e guerra para interes de hombrer norutamente en 2004. de tras una incluyencia de clasica en la cada a la universidad de esta incluyendo en construir en su que es su coloral por reelignes fue nueva al antig
+    ----- diversity: 0.6
+    ----- Generating with seed: "hijo de silvio. reino durante 31 anos. l"
+    hijo de silvio. reino durante 31 anos. la protesta original de barrinnos en el cual de cample del 16 de tenten en que estudio el otral o nacion de habitante de particular, guratura a la nocha de berriana en el loca geografica de junio se encuentoa carato, los ediciones bajos, con borma como grande incluyendo a , alli pero y represa el personal de monteriar neosi en grangsitica y se estado para contiembre estrenas en una fuerza en el ori
+    ----- diversity: 0.7
+    ----- Generating with seed: "hijo de silvio. reino durante 31 anos. l"
+    hijo de silvio. reino durante 31 anos. los yosquinas del iesta vez que se encuentoa en la tropamente al estricarso region de estas de san algunos de lo de el favorido de asi en la sahi tambien muerte en cancilla que i puede positivo. personaje oros no se convirtie a su wespe le establecer toda embory rasollas se encuentoa loyas menos 1998 en julicme que recontrollal estados alemanias tenientes de particulacion . grafia. rio evantigura, 
+
+
+Cosas que falta probar:
+- aumentar/reducir maxlen
+Reducimos el maxlen a casi la mitad (22 le pusimos a red_less_maxlen.py). El tiempo de entrenamiento disminuye proporcionalmente a la mitad (pasa de tardar 140 segundos aproximadamene a 70) como es lógico ya que la red desplegada resultante es la mitad más chica. Pero en los resultados observamos que es más propenso a caer en repetición de estructuras ("de la ... de la ... de la ...") aún con diversidades altas.
+
+
+- modificar la diversidad luego del espacio

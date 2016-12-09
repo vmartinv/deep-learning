@@ -8,26 +8,22 @@ import h5py
 from utils import *
 import os
 
-if __name__ == "__main__":
-    USAGE = "Usage python eval_model.py <model.h5>"
-    if len(argv)==2:
-        modelfile = argv[1]
-    else:
-        print(USAGE)
-        exit(1)
+USAGE = "Usage python eval_model.py <db.h5> <model.h5>"
+if len(argv)==3:
+    dbfile = argv[1]
+    modelfile = argv[2]
 else:
-    modelfile="models/red_orig.py--07-Dec-2016--12-30--best-model.h5"
+    print(USAGE)
+    exit(1)
 
 print('Cargando modelo...')
 model = load_model(modelfile)
 
 print('Cargando dataset...')
-path = "dataseth5/lesslines.h5"
+path = dbfile #"dataseth5/con-dict.h5"
 with h5py.File(path,'r') as hf:
     text = str(hf.get('dataset')[0]).decode("unicode_escape")
 print('corpus length:', len(text))
-
-text=''.join([c for c in strip_accents(text) if c.isalpha() or c in set([' ', '.', ','])]).encode("utf8","ignore")
 
 
 chars = sorted(list(set(text)))

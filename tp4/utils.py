@@ -5,7 +5,7 @@ from time import time, strftime, localtime
 import os
 import unicodedata
 
-def strip_accents(s):
+def strip_accents(s):    
     if type(s) != unicode:
         s=s.decode('utf-8')
     return ''.join(c for c in unicodedata.normalize('NFD', s)

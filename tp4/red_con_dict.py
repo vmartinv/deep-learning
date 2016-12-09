@@ -10,10 +10,11 @@ import sys
 import h5py
 from utils import *
 import os
+import codecs
 
 
 print('Cargando dataset...')
-path = "dataseth5/lesslines.h5"
+path = "dataseth5/con-dict.h5"
 with h5py.File(path,'r') as hf:
     text = str(hf.get('dataset')[0]).decode("unicode_escape")
 print('corpus length:', len(text))
@@ -33,6 +34,7 @@ for i in range(0, len(text) - maxlen, step):
     sentences.append(text[i: i + maxlen])
     next_chars.append(text[i + maxlen])
 print('nb sequences:', len(sentences))
+
 
 print('Vectorizando...')
 X = np.zeros((len(sentences), maxlen, len(chars)), dtype=np.bool)
@@ -69,7 +71,7 @@ name=NameGen(os.path.basename(sys.argv[0]))
 modelfile = name.get_model_file('best-model.h5')
 # train the model, output generated text after each iteration
 best_loss = None
-for iteration in range(1, 60):
+for iteration in range(1, 25):
     print()
     print('-' * 50)
     print('Iteration', iteration)
