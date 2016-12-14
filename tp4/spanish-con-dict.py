@@ -9,22 +9,7 @@ def list_files(directory):
     return [os.path.join(directory, f) for f in os.listdir(directory)
             if os.path.isfile(os.path.join(directory, f))]
 
-import codecs
-dicc={''}
-for dicfile in ['diccionario-espanol.txt', 'diccionario-espanol2.txt']:
-    with codecs.open(dicfile, encoding='utf-8') as myfile:
-        for l in myfile.readlines():
-            dicc.add(strip_accents(l.strip()).lower().encode('utf-8'))
-dicc.add('')
-
-
 is_allowed = lambda c: c.isalnum() or c in {' ', '.', ','}
-def in_dicc(w):
-    w=re.sub(r'[^(a-z)]', '', w.lower())
-    res= w in dicc
-    if w.endswith('s'):
-        res|=w[:-1] in dicc
-    return res
 
 def filter_line(line):
     if any([c in {u'ª', u'²', u'³', u'º', u'ß', u'ð', u'ø'} for c in line]):

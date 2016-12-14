@@ -23,7 +23,6 @@ print('Cargando dataset...')
 path = dbfile #"dataseth5/con-dict.h5"
 with h5py.File(path,'r') as hf:
     text = str(hf.get('dataset')[0]).decode("unicode_escape")
-
 print('corpus length:', len(text))
 
 
@@ -63,8 +62,14 @@ def sample(preds, temperature=1.0):
 # train the model, output generated text after each iteration
 
 
+dicc={''}
+for dicfile in ['diccionario-ingles.txt']:
+    with codecs.open(dicfile, encoding='utf-8') as myfile:
+        for l in myfile.readlines():
+            dicc.add(strip_accents(l.strip()).lower().encode('utf-8'))
+            
 start_index = random.randint(0, len(text) - maxlen - 1)
-for diversity in [0.1, 0.2, 0.3, 0.4, 0.5, 0.55, 0.6, 0.7]:
+for diversity in [0.4, 0.5, 0.55, 0.6, 0.7]:
     print('----- diversity:', diversity)
 
     generated = ''
@@ -82,11 +87,11 @@ for diversity in [0.1, 0.2, 0.3, 0.4, 0.5, 0.55, 0.6, 0.7]:
             x[0, t, char_indices[char]] = 1.
 
         preds = model.predict(x, verbose=0)[0]
-        next_index = sample(preds, diversity if next_char!=' ' else diversity+0.6)
+        next_index = sample(preds, diversity if next_char!=' ' else diversity+0.3)
         next_char = indices_char[next_index]
         if next_char==' ':
-            w=generated[generated.rfind(' '):]
-            if not in_dicc(w) and len(generated)-len(w)>=maxlen and tries<100:
+            w=generated[generated.rfind(' ')+1:].strip()
+            if not w in dicc and len(generated)-len(w)>=maxlen and tries<100:
                 generated=generated[:-len(w)]
                 sentence=generated[-maxlen:]
                 i-=len(w)
