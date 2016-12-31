@@ -6,7 +6,7 @@ from top_k_metric import top3
 from keras import backend as K
 
 source = "../rawdata/lines/"
-dest = "preview/"
+dest = "preview2/"
 img_rows = 32
 img_cols = 32
 
@@ -21,11 +21,12 @@ def windows(nameImg,winWidth,step,finalWidth):
             diffL=(finalWidth-winWidth)//2
             diffR=(finalWidth-winWidth+1)//2
             win=pp.fill_border(win,diffL,diffR,img_rows)
-        if not os.path.exists(os.path.join('preview/wins/', name[0:-4])):
-            os.makedirs(os.path.join('preview/wins/', name[0:-4]))
-        win.save(os.path.join('preview/wins/', name[0:-4], 'step'+str(s)+'.png'))
+        if not os.path.exists(os.path.join(dest,'wins', name[0:-4])):
+            os.makedirs(os.path.join(dest,'wins', name[0:-4]))
+        win.save(os.path.join(dest,'wins', name[0:-4], 'step'+str(s)+'.png'))
         win = np.asarray(win,dtype=np.float32)
         win /= 255
+        win -= 0.87370783 #featurewise mean de los datos de tp3
         wins.append(win)
     return (name,np.array(wins))
 
@@ -50,5 +51,6 @@ tp3Net.compile(loss='categorical_crossentropy',
 
 #~ tp3Net.summary()
 
-classes = map(lambda x: 32+tp3Net.predict_classes(x, batch_size=32),winsImgsOnly)
-res= map(lambda s: ''.join(map(chr,s)),classes)
+classes = map(lambda (n,i): (n, 32+tp3Net.predict_classes(i, batch_size=32)),wins)
+res= map(lambda (n, s): n[:-4]+'='+''.join(map(chr,s)),classes)
+print('\n\n'.join(res))

@@ -10,7 +10,7 @@ def list_files(directory, ext='jpg|jpeg|bmp|png'):
     return [os.path.join(directory, f) for f in os.listdir(directory)
             if os.path.isfile(os.path.join(directory, f)) and ("."+ext in f)]
 
-contrast_ratio = 5
+contrast_ratio = 25
 
 def resize(img,hMax):
     '''
@@ -27,7 +27,8 @@ def fill_border(img,left,right,hMax):
     arr = np.asarray(img)
     #~ h,w = arr.shape
     #~ col=np.median([arr[0,0],arr[0,w-1],arr[h-1,0],arr[h-1,w-1]])
-    col=np.mean(arr)
+    #~ col=np.mean(arr)
+    col = 255
     #~ print('media-antes: {}'.format(col))
     l=np.full((hMax,left), col, dtype=np.uint8)
     r=np.full((hMax,right), col, dtype=np.uint8)
@@ -41,12 +42,26 @@ def crop_and_save_line(image,ymin,ymax,dest_dir,name):
     xmax = image.size[0]
     line_image = image.crop((xmin,ymin,xmax,ymax))
     line_image=resize(line_image,32)
-    #~ line_image=fill_border(line_image,10,10,32)
+    line_image=fill_border(line_image,10,10,32)
+    line_image=erase_line(line_image)
     contrast=ImageEnhance.Contrast(line_image)
     line_image=contrast.enhance(contrast_ratio)
+    
     if dest_dir:
         line_image.save(os.path.join(dest_dir, name))
     return line_image
+
+def erase_line(img):
+    img = np.asarray(img)
+    n,m=img.shape
+    img=np.transpose(img).tolist()
+    for i in range(m):
+        for j in range(n):
+            if img[i][j]>120:
+                img[i][j]=255
+    img = np.transpose(np.array(img).astype('uint8'))
+    return Image.fromarray(img)
+        
 
 
 def refine_line_bounds(image):

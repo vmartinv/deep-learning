@@ -34,8 +34,8 @@ indices_char = dict((i, c) for i, c in enumerate(chars))
 
 print('Creando oraciones...')
 # cut the text in semi-redundant sequences of maxlen characters
-maxlen = 100
-step = 31
+maxlen = 40
+step = 3
 sentences = []
 next_chars = []
 for i in range(0, len(text) - maxlen, step):
@@ -63,71 +63,46 @@ def sample(preds, temperature=1.0):
 # train the model, output generated text after each iteration
 
 
-#~ start_index = random.randint(0, len(text) - maxlen - 1)
-#~ for diversity in [0.3, 0.4, 0.5, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0]:
-    #~ print('----- diversity:', diversity)
-
-    #~ generated = ''
-    #~ sentence = text[start_index: start_index + maxlen]
-    #~ #sentence= "tengo mucha hambre, que venga la pizza porfavor"[:maxlen]
-    #~ generated += sentence
-    #~ print('----- Generating with seed: "' + sentence + '"')
-    #~ sys.stdout.write(generated)
-    #~ next_char=' '
-    #~ i=0
-    #~ tries=0
-    #~ while i<400:
-        #~ x = np.zeros((1, maxlen, len(chars)))
-        #~ for t, char in enumerate(sentence):
-            #~ x[0, t, char_indices[char]] = 1.
-
-        #~ preds = model.predict(x, verbose=0)[0]
-        #~ next_index = sample(preds, diversity if next_char!=' ' else diversity+0.6)
-        #~ next_char = indices_char[next_index]
-        #~ if next_char==' ':
-            #~ w=generated[generated.rfind(' '):]
-            #~ if not in_dicc(w) and len(generated)-len(w)>=maxlen and tries<100:
-                #~ generated=generated[:-len(w)]
-                #~ sentence=generated[-maxlen:]
-                #~ i-=len(w)
-                #~ for j in range(len(w)):
-                    #~ sys.stdout.write('\b')
-                    #~ sys.stdout.flush()
-                #~ tries+=1
-                #~ continue
-            #~ else:
-                #~ tries=0
-
-        #~ generated += next_char
-        #~ sentence = sentence[1:] + next_char
-
-        #~ sys.stdout.write(next_char)
-        #~ sys.stdout.flush()
-        #~ i+=1
-    #~ print()
-
 start_index = random.randint(0, len(text) - maxlen - 1)
-for diversity in [0.4, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2]:
-    print()
+for diversity in [0.1, 0.2, 0.3, 0.4, 0.5, 0.55, 0.6, 0.7]:
     print('----- diversity:', diversity)
 
     generated = ''
-    sentence = '                                                                                                   ,'#text[start_index: start_index + maxlen]
+    sentence = text[start_index: start_index + maxlen]
+    #sentence= "tengo mucha hambre, que venga la pizza porfavor"[:maxlen]
     generated += sentence
     print('----- Generating with seed: "' + sentence + '"')
     sys.stdout.write(generated)
-    for i in range(400):
+    next_char=' '
+    i=0
+    tries=0
+    while i<400:
         x = np.zeros((1, maxlen, len(chars)))
         for t, char in enumerate(sentence):
             x[0, t, char_indices[char]] = 1.
 
         preds = model.predict(x, verbose=0)[0]
-        next_index = sample(preds, diversity)
+        next_index = sample(preds, diversity if next_char!=' ' else diversity+0.6)
         next_char = indices_char[next_index]
+        if next_char==' ':
+            w=generated[generated.rfind(' '):]
+            if not in_dicc(w) and len(generated)-len(w)>=maxlen and tries<100:
+                generated=generated[:-len(w)]
+                sentence=generated[-maxlen:]
+                i-=len(w)
+                for j in range(len(w)):
+                    sys.stdout.write('\b')
+                    sys.stdout.flush()
+                tries+=1
+                continue
+            else:
+                tries=0
 
         generated += next_char
         sentence = sentence[1:] + next_char
 
         sys.stdout.write(next_char)
         sys.stdout.flush()
+        i+=1
     print()
+    

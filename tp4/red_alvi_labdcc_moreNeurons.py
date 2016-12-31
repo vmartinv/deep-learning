@@ -10,11 +10,12 @@ import sys
 import h5py
 from utils import *
 import os
-import codecs
+from keras.models import load_model
 
+loadM = True
 
 print('Cargando dataset...')
-path = "dataseth5/con-dict.h5"
+path = "dataseth5/con-dict-7500lines.h5"
 with h5py.File(path,'r') as hf:
     text = str(hf.get('dataset')[0]).decode("unicode_escape")
 print('corpus length:', len(text))
@@ -26,18 +27,14 @@ indices_char = dict((i, c) for i, c in enumerate(chars))
 
 print('Creando oraciones...')
 # cut the text in semi-redundant sequences of maxlen characters
-maxlen = 40
-step = 3
+maxlen = 100
+step = 31
 sentences = []
 next_chars = []
 for i in range(0, len(text) - maxlen, step):
     sentences.append(text[i: i + maxlen])
     next_chars.append(text[i + maxlen])
-    cut=np.random.randint(1, 39)
-    sentences.append(' '*cut+text[i+cut: i + maxlen])
-    next_chars.append(text[i + maxlen])
 print('nb sequences:', len(sentences))
-
 
 print('Vectorizando...')
 X = np.zeros((len(sentences), maxlen, len(chars)), dtype=np.bool)
@@ -51,11 +48,26 @@ for i, sentence in enumerate(sentences):
 # build the model: a single LSTM
 print('Creando modelo...')
 model = Sequential()
-model.add(LSTM(128, input_shape=(maxlen, len(chars))))
-model.add(Dense(len(chars)))
-model.add(Activation('softmax'))
+model.add(LSTM(128, name='lstm1-128', consume_less='gpu', input_shape=(maxlen, len(chars)), return_sequences=True))
+model.add(Dropout(0.2))
+model.add(LSTM(128, name='lstm2-128', consume_less='gpu', return_sequences=True))
+model.add(Dropout(0.2))
+model.add(LSTM(256, name='lstm3-256', consume_less='gpu', return_sequences=True))
+model.add(Dropout(0.2))
+model.add(LSTM(256, name='lstm4-256', consume_less='gpu'))
+model.add(Dropout(0.2))
 
-optimizer = RMSprop(lr=0.01)
+model.add(Dense(256, name='densa_extra'))
+model.add(Dropout(0.3))
+model.add(Dense(len(chars), name='softmax', activation='softmax'))
+
+if loadM:
+    sys.stdout.write('Cargando pesos desde archivo...')
+    sys.stdout.flush()
+    model.load_weights('models/red_alvi_labdcc_moreNeurons.py--23-Dec-2016--18-57--iter58loss[1.2178814809178105]val_loss[1.1792419333715782].h5',by_name=False)
+    print('OK')
+
+optimizer = RMSprop(lr=0.0001) #baje el lr de 0.01 a 0.001
 print('Compilando...')
 model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
@@ -71,22 +83,30 @@ def sample(preds, temperature=1.0):
 
 print('Entrenando...')
 name=NameGen(os.path.basename(sys.argv[0]))
-modelfile = name.get_model_file('best-model.h5')
+modelfile = name.get_model_file()
 # train the model, output generated text after each iteration
-best_loss = None
-for iteration in range(1, 25):
+#~ best_loss = None
+best_val_loss = None
+
+for iteration in range(1, 60):
     print()
     print('-' * 50)
     print('Iteration', iteration)
-    history = model.fit(X, y, batch_size=128, nb_epoch=1)
-    if best_loss is None or best_loss>history.history['loss']:
-        print('Guardando modelo en {}'.format(modelfile))
-        best_loss = history.history['loss']
-        model.save(modelfile)
+    history = model.fit(X, y, batch_size=3072, nb_epoch=1, validation_split=0.25) #added validation
+    #~ if best_loss>history.history['loss'] or best_val_loss>history.history['val_loss']:
+        #~ print('Guardando modelo en {}'.format(modelfile+'iter'+str(iteration)+'loss'+str(history.history['loss'])+'val_loss'+str(history.history['val_loss'])))
+        #~ if best_loss>history.history['loss']:
+            #~ best_loss = history.history['loss']
+        #~ if best_val_loss>history.history['val_loss']:
+            #~ best_val_loss = history.history['val_loss']
+    if best_val_loss==None or history.history['val_loss']<best_val_loss:
+        print('Guardando modelo en {}'.format(modelfile+'iter'+str(iteration)+'loss'+str(history.history['loss'])+'val_loss'+str(history.history['val_loss'])))
+        best_val_loss = history.history['val_loss']
+        model.save(modelfile+'iter'+str(iteration)+'loss'+str(history.history['loss'])+'val_loss'+str(history.history['val_loss'])+'.h5')
 
     start_index = random.randint(0, len(text) - maxlen - 1)
 
-    for diversity in [0.2, 0.5, 1.0, 1.2]:
+    for diversity in [0.4, 0.7, 0.9, 1.1]:
         print()
         print('----- diversity:', diversity)
 
@@ -110,4 +130,4 @@ for iteration in range(1, 25):
             sys.stdout.write(next_char)
             sys.stdout.flush()
         print()
-    
+
