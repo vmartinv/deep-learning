@@ -2,6 +2,8 @@ https://github.com/CIFASIS/deep-learning-course/raw/master/tps/TP4.pdf
 
 Descripcion de archivos:
     -  lstm_text_generation.py la red original que nos fue dada.
+    -  rawdata/spanish el dataset del corpus en español
+    -  rawdata/lines las lineas que se deben reconocer
     -  spanish.py el archivo que carga el dataset en el .h5 original que nos fue dado.
     -  spanish-lesslines.py como el dataset cuenta con muchas líneas tomamos las primeras 100 lineas de cada una para no quedarnos sin memoria en el entrenamiento. Ésto es debido a que en el entrenamiento cargamos todo el dataset a memoria. Se podría evitar con un dataset generator para texto aunque el entrenamiento en este caso que cargamos todo a memoria es mucho más rápido y verificamos que los resultados con el criterio de estas 100 lineas son muy similares.
     -  spanish-con-dict-1000lines.py este archivo filtra del dataset y genera el h5 como los anteriores pero utiliza un diccionario para seleccionar las oraciones lindas.
