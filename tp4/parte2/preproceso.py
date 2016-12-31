@@ -57,7 +57,7 @@ def erase_line(img):
     img=np.transpose(img).tolist()
     for i in range(m):
         for j in range(n):
-            if img[i][j]>120:
+            if img[i][j]>150:
                 img[i][j]=255
     img = np.transpose(np.array(img).astype('uint8'))
     return Image.fromarray(img)

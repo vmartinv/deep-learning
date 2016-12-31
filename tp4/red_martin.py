@@ -15,7 +15,7 @@ from keras.models import load_model
 loadM = False
 
 print('Cargando dataset...')
-path = "dataseth5/con-dict-2000lines.h5"
+path = "dataseth5/con-dict.h5"
 with h5py.File(path,'r') as hf:
     text = str(hf.get('dataset')[0]).decode("unicode_escape")
 print('corpus length:', len(text))
@@ -27,16 +27,16 @@ indices_char = dict((i, c) for i, c in enumerate(chars))
 
 print('Creando oraciones...')
 # cut the text in semi-redundant sequences of maxlen characters
-maxlen = 100
+maxlen = 80
 step = 31
 sentences = []
 next_chars = []
 for i in range(0, len(text) - maxlen, step):
     sentences.append(text[i: i + maxlen])
     next_chars.append(text[i + maxlen])
-    cut=np.random.randint(1, 39)
-    sentences.append(' '*cut+text[i+cut: i + maxlen])
-    next_chars.append(text[i + maxlen])
+    cut=np.random.randint(1, maxlen-1)
+    #~ sentences.append(' '*cut+text[i+cut: i + maxlen])
+    #~ next_chars.append(text[i + maxlen])
 print('nb sequences:', len(sentences))
 
 print('Vectorizando...')

@@ -4,8 +4,13 @@ Descripcion de archivos:
     -  lstm_text_generation.py la red original que nos fue dada.
     -  spanish.py el archivo que carga el dataset en el .h5 original que nos fue dado.
     -  spanish-lesslines.py como el dataset cuenta con muchas líneas tomamos las primeras 100 lineas de cada una para no quedarnos sin memoria en el entrenamiento. Ésto es debido a que en el entrenamiento cargamos todo el dataset a memoria. Se podría evitar con un dataset generator para texto aunque el entrenamiento en este caso que cargamos todo a memoria es mucho más rápido y verificamos que los resultados con el criterio de estas 100 lineas son muy similares.
-    -  dataset/lesslines.h5 archivo que genera el módulo anterior.
-    -  red_orig: ésta es la red original, pero adaptada para que use "lesslines.h5" en lugar de el texto de nietzche
+    -  spanish-con-dict-1000lines.py este archivo filtra del dataset y genera el h5 como los anteriores pero utiliza un diccionario para seleccionar las oraciones lindas.
+    -  red_martin.py es la red de alvi(3lstm), pero al dataset se agregan oraciones con menos caracteres que el maximo (se rellenan con espacios), así se puede predecir al principio del reconocimiento cuando no hay datos anteriores.
+    -  parte2/preproceso.py carga las lineas a reconocer y las preprocesa (aumenta contraste, saca renglón, recorta, etc)
+    -  parte2/recognition.py reconoce los caracteres usando la red del tp3 y la lstm del tp4.
+    -  diccionario*.txt diccionario usado por los generadores
+    -  dataset/*.h5 son los dataset generados por los archivos spanish*.py.
+    -  red_orig.py: ésta es la red original, pero adaptada para que use "lesslines.h5" en lugar de el texto de nietzche
     -  utilis.py: contiene funciones utiles usadas en los otros archivos
     -  eval_model.py: modulo para evaluar (generar texto) de modelos ya entrenados.
 
