@@ -8,7 +8,7 @@ import codecs
 import re
 
 
-def strip_accents(s):    
+def strip_accents(s):
     if type(s) != unicode:
         s=s.decode('utf-8')
     return ''.join(c for c in unicodedata.normalize('NFD', s)
@@ -27,21 +27,21 @@ def in_dicc(w):
     if w.endswith('s'):
         res|=w[:-1] in dicc
     return res
-    
+
 class NameGen(object):
     def __init__(self, base_name):
         self.name = base_name + '--' + strftime("%d-%b-%Y--%H-%M", localtime())
-        
+
     def get_name(self):
         return self.name
-    
+
     def get_file(self, dire, suffix):
         if not os.path.exists(dire):
             os.makedirs(dire)
         return os.path.join(dire, self.name + '--' + suffix)
-        
-    def get_model_file(self, suffix):
+
+    def get_model_file(self, suffix=''):
         return self.get_file("models", suffix)
-        
-    def get_history_file(self, suffix):
+
+    def get_history_file(self, suffix=''):
         return self.get_file("histories", suffix)
