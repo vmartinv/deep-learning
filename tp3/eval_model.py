@@ -88,7 +88,7 @@ plt.grid(True)
 plt.title('')
 for i, (ch, a, q) in enumerate(asdf):
     plt.text(a + 0.01, i, "%.2f%%"%(q/float(total)*100.), color='black', fontweight='bold')
-plt.savefig(graphfile, bbox_inches='tight', dpi = 300)
+plt.saveevfig(graphfile, bbox_inches='tight', dpi = 300)
 plt.clf()
 
 
