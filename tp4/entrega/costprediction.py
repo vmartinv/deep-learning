@@ -8,8 +8,8 @@ def costChar(c1, c2):
 def isAMatch(c1, c2):
     return (1 if c1 == c2  else 0)
 
-# Esta funcion de costo es similar a una distancia edicion (minimo numero de borrados, ediciones o inserciones) de la cadena original (s1) a la predecida.
-# Decimos similar puesto a que permitimos a varios caracteres de s2 machearse con uno de s1 (por los caracteres repetidos sobre la prediccion).
+# Esta funcion de costo es similar a una distancia edicion (minimo numero de borrados, ediciones o inserciones) de la cadena original (s1) a la predicha.
+# Decimos similar puesto a que permitimos a varios caracteres de s2 matchearse con uno de s1 (por los caracteres repetidos sobre la prediccion).
 def costFunc(s1, s2):
     s1 = (unidecode.unidecode(s1.decode('utf-8')) ).lower()
     len1, len2 = len(s1), len(s2)
@@ -28,7 +28,7 @@ def costFunc(s1, s2):
 
 
 # Es una especie de distancia edicion pero penaliza mas no predecir un caracter que esta en la cadena original.
-# Resuelve el problema de que: aaaaaabbbbbbbbccccccccc sea una buena predicion de axbxc (las x no son predecidas cuando si debieran serlo! y eso es grave!)
+# Resuelve el problema de que: aaaaaabbbbbbbbccccccccc sea una buena prediccion de axbxc (las x no son predichas cuando si debieran serlo! y eso es grave!)
 # Lo que queremos decir que no es el mismo costo las ediciones sobre s1 que sobre s2.
 
 def costFunc2(s1, s2):
@@ -51,8 +51,8 @@ def costFunc2(s1, s2):
     return float(dp[0][0][0])/costoSalto
 
 # Esta es en nuestro criterio la mejor funcion de costo ya que no tiene en cuenta la prediccion de caracter mas probable sino toda la matriz de probabilidades que es output de la CNN.
-# Trata de matchear o justificar la distribucion de probabilidad de cada ventana asignandole un caracter de la cadena original. El costo de esta justificacion esta dado por la probabilidad de que esta justificacion (o matcheo) sea incorrecto segun esa distribucion. Ademas penaliza igual que la anteriore el hecho de que haya caracteres en la original que no sean justificados (predictos) por ninguna ventana.
-# A nuestro criterio es la que mas correlacion con los resultados finales. En el sentido que cuando es bajo esta funcion de costo los resultados finales son positivos.
+# Trata de matchear o justificar la distribucion de probabilidad de cada ventana asignandole un caracter de la cadena original. El costo de esta justificacion esta dado por la probabilidad de que esta justificacion (o matcheo) sea incorrecto segun esa distribucion. Ademas penaliza igual que las anteriores el hecho de que haya caracteres en la original que no sean justificados (predichos) por ninguna ventana.
+# A nuestro criterio es la que tiene mas correlacion con los resultados finales. En el sentido que cuando es baja esta funcion de costo, los resultados finales son positivos.
 
 def costFunc3(original, probpredict):
     original = (unidecode.unidecode(original.decode('utf-8')) ).lower()
